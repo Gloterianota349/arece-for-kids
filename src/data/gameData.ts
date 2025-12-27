@@ -1,0 +1,638 @@
+import { Character, Game, Achievement, EducationalContent } from '@/types/game';
+
+// CÓDIGOS DE DESBLOQUEIO
+export const UNLOCK_CODES = {
+  // Jogos
+  GAME_MEMORY: 'ARECE-MEM-2024',
+  GAME_QUIZ: 'ARECE-QUI-2024',
+  GAME_WORDSEARCH: 'ARECE-CAC-2024',
+  GAME_CROSSWORD: 'ARECE-CRU-2024',
+  GAME_MOSQUITO: 'ARECE-MOS-2024',
+  
+  // Personagens Básicos
+  CHAR_GOTA: 'ARECE-GOT-BAS1',
+  CHAR_FOLHA: 'ARECE-FOL-BAS2',
+  
+  // Personagens Comuns
+  CHAR_COPI: 'ARECE-COP-COM1',
+  CHAR_NATURA: 'ARECE-NAT-COM2',
+  
+  // Personagens Épicos
+  CHAR_GUARDIAO: 'ARECE-GUA-EPI1',
+  CHAR_CURANDEIRA: 'ARECE-CUR-EPI2',
+  
+  // Personagens Lendários
+  CHAR_ARECE: 'ARECE-ARE-LEN1',
+  CHAR_AMAZONIA: 'ARECE-AMA-LEN2',
+};
+
+export const characters: Character[] = [
+  // Básicos
+  {
+    id: 'gota',
+    name: 'Gotinha',
+    description: 'Uma gotinha de óleo de Copaíba muito alegre!',
+    rarity: 'basic',
+    emoji: '💧',
+    unlockCode: UNLOCK_CODES.CHAR_GOTA,
+    ability: 'Escudo Protetor',
+    story: 'Gotinha nasceu nas árvores da Amazônia e adora proteger as crianças dos mosquitos com seu poder especial de criar escudos de proteção natural.',
+    unlocked: true, // Primeiro personagem é gratuito
+  },
+  {
+    id: 'folha',
+    name: 'Folhinha',
+    description: 'Uma folha verde que ama a natureza!',
+    rarity: 'basic',
+    emoji: '🍃',
+    unlockCode: UNLOCK_CODES.CHAR_FOLHA,
+    ability: 'Vento Refrescante',
+    story: 'Folhinha veio da copa das árvores mais altas e traz consigo o vento fresco da floresta que afasta qualquer mosquito.',
+    unlocked: false,
+  },
+  // Comuns
+  {
+    id: 'copi',
+    name: 'Copi',
+    description: 'O mascote oficial da Copaíba!',
+    rarity: 'common',
+    emoji: '🌳',
+    unlockCode: UNLOCK_CODES.CHAR_COPI,
+    ability: 'Aroma Protetor',
+    story: 'Copi é o guardião das árvores de Copaíba. Ele carrega consigo o aroma natural que protege todos ao seu redor.',
+    unlocked: false,
+  },
+  {
+    id: 'natura',
+    name: 'Naturinha',
+    description: 'Defensora da floresta amazônica!',
+    rarity: 'common',
+    emoji: '🌺',
+    unlockCode: UNLOCK_CODES.CHAR_NATURA,
+    ability: 'Cura Verde',
+    story: 'Naturinha conhece todos os segredos da floresta e usa seus poderes para curar e proteger quem precisa.',
+    unlocked: false,
+  },
+  // Épicos
+  {
+    id: 'guardiao',
+    name: 'Guardião Verde',
+    description: 'Protetor épico das crianças!',
+    rarity: 'epic',
+    emoji: '🦸',
+    unlockCode: UNLOCK_CODES.CHAR_GUARDIAO,
+    ability: 'Barreira Amazônica',
+    story: 'O Guardião Verde é um antigo protetor da floresta que ganhou poderes épicos para defender as crianças de todas as ameaças.',
+    unlocked: false,
+  },
+  {
+    id: 'curandeira',
+    name: 'Curandeira',
+    description: 'Sábia conhecedora das plantas!',
+    rarity: 'epic',
+    emoji: '🧙‍♀️',
+    unlockCode: UNLOCK_CODES.CHAR_CURANDEIRA,
+    ability: 'Poção Mágica',
+    story: 'A Curandeira domina as artes ancestrais da floresta e cria poções mágicas que protegem contra qualquer doença.',
+    unlocked: false,
+  },
+  // Lendários
+  {
+    id: 'arece',
+    name: 'Arecê',
+    description: 'O herói lendário da marca!',
+    rarity: 'legendary',
+    emoji: '👑',
+    unlockCode: UNLOCK_CODES.CHAR_ARECE,
+    ability: 'Poder Supremo',
+    story: 'Arecê é o herói lendário que deu nome à marca. Seus poderes supremos protegem todas as crianças do Brasil contra mosquitos e doenças.',
+    unlocked: false,
+  },
+  {
+    id: 'amazonia',
+    name: 'Espírito da Amazônia',
+    description: 'A força viva da floresta!',
+    rarity: 'legendary',
+    emoji: '✨',
+    unlockCode: UNLOCK_CODES.CHAR_AMAZONIA,
+    ability: 'Benção da Natureza',
+    story: 'O Espírito da Amazônia representa toda a força e magia da maior floresta do mundo. Sua benção traz proteção eterna.',
+    unlocked: false,
+  },
+];
+
+export const games: Game[] = [
+  {
+    id: 'memory',
+    name: 'Jogo da Memória',
+    description: 'Encontre os pares e treine sua memória!',
+    icon: '🧠',
+    unlockCode: UNLOCK_CODES.GAME_MEMORY,
+    unlocked: true, // Primeiro jogo é gratuito
+    color: 'from-blue-400 to-cyan-500',
+    levels: 5,
+  },
+  {
+    id: 'quiz',
+    name: 'Quiz do Saber',
+    description: 'Teste seus conhecimentos sobre mosquitos e natureza!',
+    icon: '❓',
+    unlockCode: UNLOCK_CODES.GAME_QUIZ,
+    unlocked: false,
+    color: 'from-purple-400 to-pink-500',
+    levels: 5,
+  },
+  {
+    id: 'wordsearch',
+    name: 'Caça-Palavras',
+    description: 'Encontre as palavras escondidas!',
+    icon: '🔍',
+    unlockCode: UNLOCK_CODES.GAME_WORDSEARCH,
+    unlocked: false,
+    color: 'from-green-400 to-emerald-500',
+    levels: 5,
+  },
+  {
+    id: 'crossword',
+    name: 'Palavras Cruzadas',
+    description: 'Complete as palavras com suas dicas!',
+    icon: '✏️',
+    unlockCode: UNLOCK_CODES.GAME_CROSSWORD,
+    unlocked: false,
+    color: 'from-orange-400 to-yellow-500',
+    levels: 5,
+  },
+  {
+    id: 'mosquito',
+    name: 'Caça aos Mosquitos',
+    description: 'Elimine os mosquitos e proteja sua família!',
+    icon: '🦟',
+    unlockCode: UNLOCK_CODES.GAME_MOSQUITO,
+    unlocked: false,
+    color: 'from-red-400 to-rose-500',
+    levels: 5,
+  },
+];
+
+export const achievements: Achievement[] = [
+  // Jogos
+  {
+    id: 'first_game',
+    name: 'Primeira Vitória',
+    description: 'Complete seu primeiro jogo!',
+    icon: '🏆',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 1,
+    category: 'games',
+  },
+  {
+    id: 'memory_master',
+    name: 'Mestre da Memória',
+    description: 'Complete todas as fases do Jogo da Memória',
+    icon: '🧠',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 5,
+    category: 'games',
+  },
+  {
+    id: 'quiz_genius',
+    name: 'Gênio do Quiz',
+    description: 'Acerte 50 perguntas no Quiz',
+    icon: '💡',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 50,
+    category: 'games',
+  },
+  {
+    id: 'word_hunter',
+    name: 'Caçador de Palavras',
+    description: 'Encontre 100 palavras no Caça-Palavras',
+    icon: '🔎',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 100,
+    category: 'games',
+  },
+  {
+    id: 'mosquito_slayer',
+    name: 'Exterminador de Mosquitos',
+    description: 'Elimine 500 mosquitos',
+    icon: '⚔️',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 500,
+    category: 'games',
+  },
+  // Coleção
+  {
+    id: 'first_character',
+    name: 'Novo Amigo',
+    description: 'Desbloqueie seu primeiro personagem',
+    icon: '👋',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 1,
+    category: 'collection',
+  },
+  {
+    id: 'collector',
+    name: 'Colecionador',
+    description: 'Desbloqueie 5 personagens',
+    icon: '📦',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 5,
+    category: 'collection',
+  },
+  {
+    id: 'legendary_hunter',
+    name: 'Caçador Lendário',
+    description: 'Desbloqueie um personagem lendário',
+    icon: '👑',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 1,
+    category: 'collection',
+  },
+  // Aprendizado
+  {
+    id: 'curious_mind',
+    name: 'Mente Curiosa',
+    description: 'Leia 3 artigos educativos',
+    icon: '📚',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 3,
+    category: 'learning',
+  },
+  {
+    id: 'nature_lover',
+    name: 'Amante da Natureza',
+    description: 'Complete a seção sobre preservação',
+    icon: '🌿',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 1,
+    category: 'learning',
+  },
+  // Especiais
+  {
+    id: 'daily_player',
+    name: 'Jogador Dedicado',
+    description: 'Jogue por 7 dias seguidos',
+    icon: '📅',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 7,
+    category: 'special',
+  },
+  {
+    id: 'perfect_score',
+    name: 'Pontuação Perfeita',
+    description: 'Consiga pontuação máxima em qualquer jogo',
+    icon: '⭐',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 1,
+    category: 'special',
+  },
+];
+
+export const educationalContent: EducationalContent[] = [
+  {
+    id: 'mosquito-combat',
+    title: 'Como Combater o Aedes Aegypti',
+    icon: '🦟',
+    color: 'from-red-400 to-orange-500',
+    content: [
+      '🚫 Não deixe água parada em pneus, garrafas, vasos de plantas ou qualquer recipiente!',
+      '🧹 Limpe as calhas e ralos regularmente para evitar acúmulo de água.',
+      '🪣 Mantenha caixas d\'água bem tampadas.',
+      '🌱 Coloque areia nos pratos das plantas para evitar água acumulada.',
+      '♻️ Descarte corretamente o lixo que pode acumular água.',
+      '🏠 Mantenha a casa sempre limpa e organizada.',
+      '💡 O mosquito gosta de locais escuros e úmidos - fique atento!',
+    ],
+    quiz: [
+      {
+        question: 'Onde o Aedes Aegypti coloca seus ovos?',
+        options: ['Na terra seca', 'Em água parada', 'Nas árvores', 'No ar'],
+        correctAnswer: 1,
+        explanation: 'O Aedes Aegypti precisa de água parada para colocar seus ovos e se reproduzir!',
+      },
+    ],
+  },
+  {
+    id: 'mosquito-protection',
+    title: 'Como Evitar Picadas de Mosquito',
+    icon: '🛡️',
+    color: 'from-blue-400 to-cyan-500',
+    content: [
+      '🧴 Use repelentes naturais como os produtos Arecê com óleo de Copaíba!',
+      '👕 Vista roupas claras e que cubram braços e pernas.',
+      '🪟 Instale telas em portas e janelas.',
+      '🌙 Use mosquiteiros na hora de dormir.',
+      '⏰ Evite ficar ao ar livre no amanhecer e entardecer (horários de maior atividade do mosquito).',
+      '🌿 Plantas como citronela e lavanda ajudam a afastar mosquitos.',
+      '✨ Os produtos Arecê são feitos com ingredientes naturais da Amazônia!',
+    ],
+    quiz: [
+      {
+        question: 'Qual ingrediente natural dos produtos Arecê ajuda a afastar mosquitos?',
+        options: ['Chocolate', 'Óleo de Copaíba', 'Leite', 'Açúcar'],
+        correctAnswer: 1,
+        explanation: 'O óleo de Copaíba é um ingrediente natural da Amazônia com propriedades repelentes!',
+      },
+    ],
+  },
+  {
+    id: 'mosquito-diseases',
+    title: 'Doenças Transmitidas pelo Aedes',
+    icon: '🏥',
+    color: 'from-purple-400 to-pink-500',
+    content: [
+      '🤒 Dengue: causa febre alta, dores no corpo e manchas vermelhas na pele.',
+      '😵 Zika: pode causar febre baixa, coceira e vermelhidão nos olhos.',
+      '💪 Chikungunya: causa dores muito fortes nas articulações.',
+      '🧠 Febre Amarela: é uma doença grave que pode afetar o fígado.',
+      '⚠️ Todas essas doenças são transmitidas pela picada do mosquito infectado.',
+      '👨‍⚕️ Se tiver sintomas, procure um médico imediatamente!',
+      '💧 Beba muita água e descanse se estiver doente.',
+    ],
+    quiz: [
+      {
+        question: 'Qual doença NÃO é transmitida pelo Aedes Aegypti?',
+        options: ['Dengue', 'Gripe', 'Zika', 'Chikungunya'],
+        correctAnswer: 1,
+        explanation: 'A gripe é transmitida por vírus através do ar, não por mosquitos!',
+      },
+    ],
+  },
+  {
+    id: 'nature-preservation',
+    title: 'Como Preservar a Natureza',
+    icon: '🌳',
+    color: 'from-green-400 to-emerald-500',
+    content: [
+      '🌱 Plante árvores e cuide das plantas ao seu redor.',
+      '♻️ Recicle papel, plástico, vidro e metal.',
+      '💧 Economize água fechando a torneira ao escovar os dentes.',
+      '💡 Apague as luzes quando sair de um cômodo.',
+      '🚶 Prefira andar a pé ou de bicicleta quando possível.',
+      '🛒 Use sacolas reutilizáveis no mercado.',
+      '🌍 Pequenas ações fazem grande diferença para o planeta!',
+    ],
+    quiz: [
+      {
+        question: 'O que podemos fazer para economizar água?',
+        options: ['Deixar a torneira aberta', 'Fechar a torneira ao escovar os dentes', 'Tomar banhos de 1 hora', 'Lavar o carro todo dia'],
+        correctAnswer: 1,
+        explanation: 'Fechar a torneira enquanto escovamos os dentes economiza muitos litros de água!',
+      },
+    ],
+  },
+  {
+    id: 'nature-benefits',
+    title: 'Como a Natureza nos Ajuda',
+    icon: '🌿',
+    color: 'from-teal-400 to-green-500',
+    content: [
+      '🌬️ As árvores produzem o oxigênio que respiramos.',
+      '💧 As florestas ajudam a regular o clima e as chuvas.',
+      '💊 Muitos remédios vêm das plantas, como o óleo de Copaíba!',
+      '🐝 Os insetos polinizam as plantas que nos dão frutas.',
+      '🏞️ A natureza nos oferece lugares lindos para descansar.',
+      '🧘 Estar na natureza faz bem para a mente e o corpo.',
+      '🌈 A biodiversidade mantém o equilíbrio do planeta.',
+    ],
+    quiz: [
+      {
+        question: 'De onde vem o óleo de Copaíba usado nos produtos Arecê?',
+        options: ['De uma fábrica', 'De uma árvore da Amazônia', 'Do oceano', 'De uma pedra'],
+        correctAnswer: 1,
+        explanation: 'O óleo de Copaíba vem da árvore Copaíba, nativa da Amazônia brasileira!',
+      },
+    ],
+  },
+  {
+    id: 'nature-destruction',
+    title: 'Impactos da Destruição da Natureza',
+    icon: '⚠️',
+    color: 'from-orange-400 to-red-500',
+    content: [
+      '🔥 Queimadas destroem habitats de animais e plantas.',
+      '🌡️ O desmatamento aumenta o aquecimento global.',
+      '💨 A poluição do ar causa doenças respiratórias.',
+      '🐟 O lixo nos oceanos mata animais marinhos.',
+      '🦁 Muitas espécies estão em risco de extinção.',
+      '🌊 O derretimento das geleiras aumenta o nível do mar.',
+      '🤝 Juntos podemos reverter esse cenário!',
+    ],
+    quiz: [
+      {
+        question: 'O que as queimadas causam na natureza?',
+        options: ['Ajudam as plantas a crescer', 'Destroem habitats de animais', 'Deixam o ar mais limpo', 'Criam mais florestas'],
+        correctAnswer: 1,
+        explanation: 'As queimadas destroem as casas dos animais e plantas, causando grande dano à natureza.',
+      },
+    ],
+  },
+  {
+    id: 'amazon-forest',
+    title: 'A Floresta Amazônica',
+    icon: '🌴',
+    color: 'from-green-500 to-teal-600',
+    content: [
+      '🌳 A Amazônia é a maior floresta tropical do mundo!',
+      '🦜 Ela abriga milhões de espécies de animais e plantas.',
+      '💨 Produz cerca de 20% do oxigênio do planeta.',
+      '💧 O Rio Amazonas é o maior rio do mundo em volume de água.',
+      '👥 Muitos povos indígenas vivem e protegem a floresta.',
+      '🌿 De lá vêm ingredientes naturais como o óleo de Copaíba.',
+      '❤️ Proteger a Amazônia é proteger nosso futuro!',
+    ],
+    quiz: [
+      {
+        question: 'Por que a Floresta Amazônica é tão importante?',
+        options: ['Porque tem muitas lojas', 'Porque produz oxigênio e abriga muitas espécies', 'Porque é pequena', 'Porque não tem animais'],
+        correctAnswer: 1,
+        explanation: 'A Amazônia é fundamental para o planeta por produzir oxigênio e abrigar uma biodiversidade incrível!',
+      },
+    ],
+  },
+  {
+    id: 'sustainable-habits',
+    title: 'Hábitos Sustentáveis',
+    icon: '♻️',
+    color: 'from-cyan-400 to-blue-500',
+    content: [
+      '🍎 Prefira alimentos naturais e da época.',
+      '📦 Evite produtos com muitas embalagens.',
+      '🧴 Use produtos naturais como os da Arecê!',
+      '📚 Doe livros e brinquedos que não usa mais.',
+      '🚿 Tome banhos mais curtos para economizar água.',
+      '🌻 Cultive uma horta em casa, mesmo que pequena.',
+      '💚 Inspire seus amigos a cuidar do planeta também!',
+    ],
+    quiz: [
+      {
+        question: 'O que é um hábito sustentável?',
+        options: ['Jogar lixo no chão', 'Usar produtos naturais', 'Desperdiçar água', 'Deixar luzes acesas'],
+        correctAnswer: 1,
+        explanation: 'Hábitos sustentáveis são ações que ajudam a preservar o meio ambiente, como usar produtos naturais!',
+      },
+    ],
+  },
+];
+
+export const quizQuestions = {
+  level1: [
+    {
+      question: 'Qual é a cor do mosquito Aedes Aegypti?',
+      options: ['Vermelho', 'Preto com listras brancas', 'Verde', 'Amarelo'],
+      correctAnswer: 1,
+      explanation: 'O Aedes Aegypti é preto com listras brancas nas patas e no corpo!',
+    },
+    {
+      question: 'O que o mosquito precisa para se reproduzir?',
+      options: ['Fogo', 'Água parada', 'Terra', 'Ar'],
+      correctAnswer: 1,
+      explanation: 'O mosquito coloca seus ovos em água parada limpa.',
+    },
+    {
+      question: 'Qual produto natural ajuda a afastar mosquitos?',
+      options: ['Chocolate', 'Óleo de Copaíba', 'Refrigerante', 'Pizza'],
+      correctAnswer: 1,
+      explanation: 'O óleo de Copaíba tem propriedades naturais repelentes!',
+    },
+  ],
+  level2: [
+    {
+      question: 'Quantos dias vivem os ovos do Aedes em ambiente seco?',
+      options: ['1 dia', 'Até 1 ano', '1 semana', 'Morrem imediatamente'],
+      correctAnswer: 1,
+      explanation: 'Os ovos podem sobreviver até 450 dias em ambiente seco!',
+    },
+    {
+      question: 'Em que horário o mosquito mais pica?',
+      options: ['Meio-dia', 'Meia-noite', 'Amanhecer e entardecer', 'Nunca pica'],
+      correctAnswer: 2,
+      explanation: 'O Aedes é mais ativo ao amanhecer e ao entardecer.',
+    },
+    {
+      question: 'De onde vem o nome Arecê?',
+      options: ['De uma cidade', 'Da natureza amazônica', 'De um cientista', 'De um país'],
+      correctAnswer: 1,
+      explanation: 'Arecê é inspirado na natureza e cultura amazônica!',
+    },
+  ],
+  level3: [
+    {
+      question: 'Qual doença NÃO é transmitida pelo Aedes?',
+      options: ['Dengue', 'Malária', 'Zika', 'Chikungunya'],
+      correctAnswer: 1,
+      explanation: 'A Malária é transmitida pelo mosquito Anopheles, não pelo Aedes.',
+    },
+    {
+      question: 'Quantas vezes por semana devemos verificar possíveis criadouros?',
+      options: ['Uma vez por mês', 'Pelo menos uma vez', 'Nunca', 'Só quando chove'],
+      correctAnswer: 1,
+      explanation: 'Devemos verificar pelo menos uma vez por semana!',
+    },
+    {
+      question: 'Qual é o ciclo de vida completo do mosquito?',
+      options: ['Ovo → Adulto', 'Ovo → Larva → Pupa → Adulto', 'Larva → Ovo', 'Adulto → Larva'],
+      correctAnswer: 1,
+      explanation: 'O ciclo completo passa por ovo, larva, pupa e depois adulto.',
+    },
+  ],
+  level4: [
+    {
+      question: 'Qual a distância máxima que o Aedes voa normalmente?',
+      options: ['100 km', '200 metros', '1 metro', '10 km'],
+      correctAnswer: 1,
+      explanation: 'O Aedes geralmente não voa mais que 200 metros de onde nasceu.',
+    },
+    {
+      question: 'Por que usar roupas claras ajuda contra mosquitos?',
+      options: ['Mosquitos preferem cores escuras', 'Roupas claras são mais bonitas', 'Não faz diferença', 'Roupas claras são mais quentes'],
+      correctAnswer: 0,
+      explanation: 'Mosquitos são mais atraídos por cores escuras!',
+    },
+    {
+      question: 'O que é a Copaíba?',
+      options: ['Um tipo de mosquito', 'Uma árvore da Amazônia', 'Uma doença', 'Um país'],
+      correctAnswer: 1,
+      explanation: 'A Copaíba é uma árvore amazônica cujo óleo tem propriedades medicinais!',
+    },
+  ],
+  level5: [
+    {
+      question: 'Qual a importância das comunidades ribeirinhas na preservação?',
+      options: ['Nenhuma', 'Conhecimento tradicional sobre plantas medicinais', 'Destroem a floresta', 'Não vivem na Amazônia'],
+      correctAnswer: 1,
+      explanation: 'As comunidades tradicionais guardam conhecimentos ancestrais sobre as plantas!',
+    },
+    {
+      question: 'Como a destruição da Amazônia afeta o clima?',
+      options: ['Melhora o clima', 'Aumenta o aquecimento global', 'Não afeta', 'Diminui as chuvas apenas na Amazônia'],
+      correctAnswer: 1,
+      explanation: 'O desmatamento contribui para o aquecimento global e afeta o clima mundial.',
+    },
+    {
+      question: 'Por que produtos naturais são melhores para crianças?',
+      options: ['São mais baratos', 'Têm menos químicos agressivos', 'Não funcionam', 'São mais fortes'],
+      correctAnswer: 1,
+      explanation: 'Produtos naturais como os da Arecê são mais gentis com a pele sensível das crianças!',
+    },
+  ],
+};
+
+export const wordSearchWords = {
+  level1: ['AEDES', 'AGUA', 'DENGUE', 'SAUDE'],
+  level2: ['COPAIBA', 'FLORESTA', 'PROTEGER', 'NATUREZA', 'ARECE'],
+  level3: ['AMAZONIA', 'REPELENTE', 'MOSQUITO', 'PREVENIR', 'LIMPAR'],
+  level4: ['BIODIVERSIDADE', 'SUSTENTAVEL', 'EQUILIBRIO', 'PRESERVAR'],
+  level5: ['CONSCIENTIZACAO', 'RESPONSABILIDADE', 'COMUNIDADE', 'TRADICIONAL'],
+};
+
+export const crosswordClues = {
+  level1: [
+    { word: 'AGUA', clue: 'O mosquito precisa dela parada para se reproduzir', direction: 'horizontal' },
+    { word: 'DENGUE', clue: 'Doença transmitida pelo Aedes', direction: 'vertical' },
+    { word: 'ARECE', clue: 'Nome da marca de repelentes naturais', direction: 'horizontal' },
+  ],
+  level2: [
+    { word: 'COPAIBA', clue: 'Árvore amazônica usada nos produtos', direction: 'horizontal' },
+    { word: 'REPELENTE', clue: 'Produto que afasta mosquitos', direction: 'vertical' },
+    { word: 'FLORESTA', clue: 'Onde vivem as árvores', direction: 'horizontal' },
+    { word: 'FOLHA', clue: 'Parte verde das plantas', direction: 'vertical' },
+  ],
+  level3: [
+    { word: 'AMAZONIA', clue: 'Maior floresta tropical do mundo', direction: 'horizontal' },
+    { word: 'OXIGENIO', clue: 'Gás que as árvores produzem', direction: 'vertical' },
+    { word: 'BIODIVERSIDADE', clue: 'Variedade de seres vivos', direction: 'horizontal' },
+    { word: 'RIO', clue: 'Curso de água doce', direction: 'vertical' },
+    { word: 'ARVORE', clue: 'Planta grande com tronco', direction: 'horizontal' },
+  ],
+  level4: [
+    { word: 'SUSTENTAVEL', clue: 'Que preserva recursos para o futuro', direction: 'horizontal' },
+    { word: 'RECICLAGEM', clue: 'Transformar lixo em novos produtos', direction: 'vertical' },
+    { word: 'PRESERVAR', clue: 'Cuidar e proteger', direction: 'horizontal' },
+    { word: 'ECONOMIA', clue: 'Não desperdiçar recursos', direction: 'vertical' },
+    { word: 'PLANETA', clue: 'Nossa casa no universo', direction: 'horizontal' },
+    { word: 'CLIMA', clue: 'Condições atmosféricas de um lugar', direction: 'vertical' },
+  ],
+  level5: [
+    { word: 'CONSCIENTIZACAO', clue: 'Despertar para a importância de algo', direction: 'horizontal' },
+    { word: 'RESPONSABILIDADE', clue: 'Dever de cuidar de algo', direction: 'vertical' },
+    { word: 'TRADICIONAL', clue: 'Conhecimento passado de geração em geração', direction: 'horizontal' },
+    { word: 'INDIGENA', clue: 'Povos originários do Brasil', direction: 'vertical' },
+    { word: 'EQUILIBRIO', clue: 'Harmonia entre as partes', direction: 'horizontal' },
+    { word: 'NATUREZA', clue: 'Tudo que existe sem intervenção humana', direction: 'vertical' },
+    { word: 'FUTURO', clue: 'Tempo que ainda está por vir', direction: 'horizontal' },
+  ],
+};
