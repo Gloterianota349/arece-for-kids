@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { wordSearchWords } from '@/data/gameData';
 import { Star, Check, RotateCcw } from 'lucide-react';
@@ -28,6 +28,7 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
   const [foundWords, setFoundWords] = useState<string[]>([]);
   const [isSelecting, setIsSelecting] = useState(false);
   const [wordPositions, setWordPositions] = useState<Map<string, Cell[]>>(new Map());
+  const [startCell, setStartCell] = useState<Cell | null>(null);
 
   const generateGrid = () => {
     const newGrid: Cell[][] = Array(gridSize).fill(null).map((_, row) =>
@@ -112,48 +113,65 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
     return foundWords.length * 150 + level * 200;
   };
 
-  const handleCellMouseDown = (cell: Cell) => {
-    setIsSelecting(true);
-    setSelectedCells([cell]);
-    const newGrid = grid.map(row => row.map(c => ({ ...c, isSelected: c.row === cell.row && c.col === cell.col })));
+  const getCellsInLine = (start: Cell, end: Cell): Cell[] => {
+    const cells: Cell[] = [];
+    const rowDiff = end.row - start.row;
+    const colDiff = end.col - start.col;
+    
+    // Only allow horizontal or vertical
+    const isHorizontal = rowDiff === 0;
+    const isVertical = colDiff === 0;
+    
+    if (!isHorizontal && !isVertical) return cells;
+    
+    const steps = Math.max(Math.abs(rowDiff), Math.abs(colDiff));
+    const rowStep = steps > 0 ? rowDiff / steps : 0;
+    const colStep = steps > 0 ? colDiff / steps : 0;
+    
+    for (let i = 0; i <= steps; i++) {
+      const row = start.row + Math.round(rowStep * i);
+      const col = start.col + Math.round(colStep * i);
+      if (row >= 0 && row < gridSize && col >= 0 && col < gridSize) {
+        cells.push(grid[row][col]);
+      }
+    }
+    
+    return cells;
+  };
+
+  const updateSelection = (endCell: Cell) => {
+    if (!startCell) return;
+    
+    const cellsInLine = getCellsInLine(startCell, endCell);
+    setSelectedCells(cellsInLine);
+    
+    const newGrid = grid.map(row => row.map(c => ({
+      ...c,
+      isSelected: cellsInLine.some(s => s.row === c.row && s.col === c.col),
+    })));
     setGrid(newGrid);
   };
 
-  const handleCellMouseEnter = (cell: Cell) => {
-    if (!isSelecting) return;
-    
-    // Check if cell is adjacent in a line
-    if (selectedCells.length > 0) {
-      const first = selectedCells[0];
-      const last = selectedCells[selectedCells.length - 1];
-      
-      // Determine direction
-      const rowDiff = cell.row - first.row;
-      const colDiff = cell.col - first.col;
-      
-      // Only allow horizontal, vertical, or diagonal
-      const isHorizontal = rowDiff === 0;
-      const isVertical = colDiff === 0;
-      
-      if (isHorizontal || isVertical) {
-        const newSelected = [...selectedCells];
-        if (!newSelected.find(c => c.row === cell.row && c.col === cell.col)) {
-          newSelected.push(cell);
-          setSelectedCells(newSelected);
-          
-          const newGrid = grid.map(row => row.map(c => ({
-            ...c,
-            isSelected: newSelected.some(s => s.row === c.row && s.col === c.col),
-          })));
-          setGrid(newGrid);
-        }
-      }
-    }
+  const handleStart = (cell: Cell) => {
+    setIsSelecting(true);
+    setStartCell(cell);
+    setSelectedCells([cell]);
+    const newGrid = grid.map(row => row.map(c => ({ 
+      ...c, 
+      isSelected: c.row === cell.row && c.col === cell.col 
+    })));
+    setGrid(newGrid);
   };
 
-  const handleMouseUp = () => {
+  const handleMove = (cell: Cell) => {
+    if (!isSelecting || !startCell) return;
+    updateSelection(cell);
+  };
+
+  const handleEnd = () => {
     if (!isSelecting) return;
     setIsSelecting(false);
+    setStartCell(null);
     
     // Check if selected cells form a word
     const selectedWord = selectedCells.map(c => grid[c.row][c.col].letter).join('');
@@ -185,6 +203,32 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
     }
     
     setSelectedCells([]);
+  };
+
+  // Touch event handlers
+  const handleTouchStart = (e: React.TouchEvent, cell: Cell) => {
+    e.preventDefault();
+    handleStart(cell);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const element = document.elementFromPoint(touch.clientX, touch.clientY);
+    if (element) {
+      const cellData = element.getAttribute('data-cell');
+      if (cellData) {
+        const [row, col] = cellData.split('-').map(Number);
+        if (!isNaN(row) && !isNaN(col)) {
+          handleMove(grid[row][col]);
+        }
+      }
+    }
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    e.preventDefault();
+    handleEnd();
   };
 
   return (
@@ -235,9 +279,11 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
 
       {/* Grid */}
       <div 
-        className="bg-card rounded-3xl p-4 shadow-card select-none"
-        onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        className="bg-card rounded-3xl p-4 shadow-card select-none touch-none"
+        onMouseUp={handleEnd}
+        onMouseLeave={handleEnd}
+        onTouchEnd={handleTouchEnd}
+        onTouchMove={handleTouchMove}
       >
         <div 
           className="grid gap-1"
@@ -247,8 +293,10 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
             row.map((cell, colIndex) => (
               <button
                 key={`${rowIndex}-${colIndex}`}
-                onMouseDown={() => handleCellMouseDown(cell)}
-                onMouseEnter={() => handleCellMouseEnter(cell)}
+                data-cell={`${rowIndex}-${colIndex}`}
+                onMouseDown={() => handleStart(cell)}
+                onMouseEnter={() => handleMove(cell)}
+                onTouchStart={(e) => handleTouchStart(e, cell)}
                 className={`
                   aspect-square rounded-lg flex items-center justify-center
                   text-sm md:text-base font-bold transition-all duration-200
@@ -266,6 +314,11 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
           )}
         </div>
       </div>
+      
+      {/* Mobile tip */}
+      <p className="text-center text-sm text-muted-foreground mt-4">
+        💡 Arraste o dedo para selecionar as palavras
+      </p>
     </div>
   );
 }

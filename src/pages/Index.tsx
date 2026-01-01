@@ -35,10 +35,6 @@ const Index = () => {
     <div className="min-h-screen bg-background bg-pattern-leaves">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-16 px-4">
-        {/* Decorative Elements */}
-        <div className="absolute top-10 left-10 text-6xl opacity-20 floating">🌿</div>
-        <div className="absolute top-20 right-20 text-5xl opacity-20 floating" style={{ animationDelay: '1s' }}>🍃</div>
-        <div className="absolute bottom-10 left-1/4 text-4xl opacity-20 floating" style={{ animationDelay: '0.5s' }}>🌺</div>
         
         <div className="container mx-auto text-center relative z-10">
           {/* Logo */}
