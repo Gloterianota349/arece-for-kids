@@ -21,10 +21,10 @@ type Mosquito = {
 
 const levelConfigs = {
   1: { duration: 30, spawnRate: 1500, maxMosquitoes: 3, badChance: 0, mosquitoLifetime: 5000, minScore: 30 },
-  2: { duration: 45, spawnRate: 1200, maxMosquitoes: 5, badChance: 0.1, mosquitoLifetime: 4500, minScore: 80 },
-  3: { duration: 60, spawnRate: 1000, maxMosquitoes: 7, badChance: 0.15, mosquitoLifetime: 4000, minScore: 150 },
-  4: { duration: 75, spawnRate: 800, maxMosquitoes: 10, badChance: 0.2, mosquitoLifetime: 3500, minScore: 250 },
-  5: { duration: 90, spawnRate: 600, maxMosquitoes: 12, badChance: 0.25, mosquitoLifetime: 3000, minScore: 400 },
+  2: { duration: 30, spawnRate: 1200, maxMosquitoes: 5, badChance: 0.1, mosquitoLifetime: 4500, minScore: 50 },
+  3: { duration: 30, spawnRate: 1000, maxMosquitoes: 7, badChance: 0.15, mosquitoLifetime: 4000, minScore: 80 },
+  4: { duration: 30, spawnRate: 800, maxMosquitoes: 10, badChance: 0.2, mosquitoLifetime: 3500, minScore: 120 },
+  5: { duration: 30, spawnRate: 600, maxMosquitoes: 12, badChance: 0.25, mosquitoLifetime: 3000, minScore: 180 },
 };
 
 export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
@@ -60,20 +60,19 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
     
     if (timeLeft <= 0) {
       setGameOver(true);
-      const finalScore = score + level * 100;
-      const passed = finalScore >= config.minScore;
+      const passed = score >= config.minScore;
       if (passed) {
-        toast.success(`⏰ Tempo esgotado! Pontuação: ${finalScore} - Você passou!`);
+        toast.success(`⏰ Tempo esgotado! Pontuação: ${score} - Você passou!`);
       } else {
-        toast.error(`⏰ Tempo esgotado! Pontuação: ${finalScore} - Precisa de ${config.minScore} pontos para passar.`);
+        toast.error(`⏰ Tempo esgotado! Pontuação: ${score} - Precisa de ${config.minScore} pontos para passar.`);
       }
-      setTimeout(() => onComplete(passed ? finalScore : 0), 1500);
+      setTimeout(() => onComplete(passed ? score : 0), 1500);
       return;
     }
 
     const timer = setInterval(() => setTimeLeft(t => t - 1), 1000);
     return () => clearInterval(timer);
-  }, [gameStarted, gameOver, timeLeft]);
+  }, [gameStarted, gameOver, timeLeft, score]);
 
   // Spawn mosquitoes
   useEffect(() => {
@@ -251,15 +250,15 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
             <div className="bg-card rounded-3xl p-8 text-center shadow-card animate-scale-in">
               <div className="text-6xl mb-4">
-                {lives > 0 ? (score + level * 100 >= config.minScore ? '🎉' : '⏰') : '💔'}
+                {lives > 0 ? (score >= config.minScore ? '🎉' : '⏰') : '💔'}
               </div>
               <h3 className="font-pearl text-3xl text-primary mb-2">
-                {lives > 0 ? (score + level * 100 >= config.minScore ? 'Parabéns!' : 'Tempo Esgotado!') : 'Game Over!'}
+                {lives > 0 ? (score >= config.minScore ? 'Parabéns!' : 'Tempo Esgotado!') : 'Game Over!'}
               </h3>
               <p className="text-xl text-muted-foreground mb-2">
-                Pontuação Final: <span className="font-bold text-secondary">{score + level * 100}</span>
+                Pontuação Final: <span className="font-bold text-secondary">{score}</span>
               </p>
-              {score + level * 100 < config.minScore && (
+              {score < config.minScore && (
                 <p className="text-sm text-destructive">
                   Precisa de {config.minScore} pontos para passar
                 </p>
