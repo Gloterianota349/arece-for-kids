@@ -16,14 +16,15 @@ type Mosquito = {
   size: number;
   speed: number;
   isGood: boolean;
+  createdAt: number;
 };
 
 const levelConfigs = {
-  1: { duration: 30, spawnRate: 1500, maxMosquitoes: 3, badChance: 0 },
-  2: { duration: 45, spawnRate: 1200, maxMosquitoes: 5, badChance: 0.1 },
-  3: { duration: 60, spawnRate: 1000, maxMosquitoes: 7, badChance: 0.15 },
-  4: { duration: 75, spawnRate: 800, maxMosquitoes: 10, badChance: 0.2 },
-  5: { duration: 90, spawnRate: 600, maxMosquitoes: 12, badChance: 0.25 },
+  1: { duration: 30, spawnRate: 1500, maxMosquitoes: 3, badChance: 0, mosquitoLifetime: 5000, minScore: 30 },
+  2: { duration: 45, spawnRate: 1200, maxMosquitoes: 5, badChance: 0.1, mosquitoLifetime: 4500, minScore: 80 },
+  3: { duration: 60, spawnRate: 1000, maxMosquitoes: 7, badChance: 0.15, mosquitoLifetime: 4000, minScore: 150 },
+  4: { duration: 75, spawnRate: 800, maxMosquitoes: 10, badChance: 0.2, mosquitoLifetime: 3500, minScore: 250 },
+  5: { duration: 90, spawnRate: 600, maxMosquitoes: 12, badChance: 0.25, mosquitoLifetime: 3000, minScore: 400 },
 };
 
 export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
@@ -60,8 +61,13 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
     if (timeLeft <= 0) {
       setGameOver(true);
       const finalScore = score + level * 100;
-      toast.success(`⏰ Tempo esgotado! Pontuação: ${finalScore}`);
-      setTimeout(() => onComplete(finalScore), 1500);
+      const passed = finalScore >= config.minScore;
+      if (passed) {
+        toast.success(`⏰ Tempo esgotado! Pontuação: ${finalScore} - Você passou!`);
+      } else {
+        toast.error(`⏰ Tempo esgotado! Pontuação: ${finalScore} - Precisa de ${config.minScore} pontos para passar.`);
+      }
+      setTimeout(() => onComplete(passed ? finalScore : 0), 1500);
       return;
     }
 
@@ -84,6 +90,7 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
         size: isGood ? 40 + Math.random() * 20 : 50 + Math.random() * 20,
         speed: 1 + Math.random() * 2,
         isGood: !isGood, // bad = mosquito, good = butterfly
+        createdAt: Date.now(),
       };
 
       setMosquitoes(prev => [...prev, newMosquito]);
@@ -93,25 +100,27 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
     return () => clearInterval(spawner);
   }, [gameStarted, gameOver, mosquitoes.length, nextId]);
 
-  // Move mosquitoes
+  // Move mosquitoes and remove expired ones
   useEffect(() => {
     if (!gameStarted || gameOver) return;
 
     const mover = setInterval(() => {
+      const now = Date.now();
       setMosquitoes(prev => 
         prev.map(m => ({
           ...m,
           x: Math.max(5, Math.min(90, m.x + (Math.random() - 0.5) * m.speed * 3)),
           y: Math.max(15, Math.min(75, m.y + (Math.random() - 0.5) * m.speed * 3)),
         })).filter(m => {
-          // Remove if out of bounds for too long
-          return m.x >= 5 && m.x <= 90 && m.y >= 15 && m.y <= 75;
+          // Remove if expired (mosquito lifetime exceeded)
+          const age = now - m.createdAt;
+          return age < config.mosquitoLifetime && m.x >= 5 && m.x <= 90 && m.y >= 15 && m.y <= 75;
         })
       );
     }, 100);
 
     return () => clearInterval(mover);
-  }, [gameStarted, gameOver]);
+  }, [gameStarted, gameOver, config.mosquitoLifetime]);
 
   const handleClick = (mosquito: Mosquito) => {
     if (gameOver) return;
@@ -184,6 +193,7 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
       <div className="text-center mb-4">
         <h2 className="font-pearl text-3xl text-primary">Fase {level}</h2>
         <p className="text-muted-foreground">Acerte os mosquitos 🦟 e evite as borboletas 🦋</p>
+        <p className="text-sm text-secondary mt-1">Meta: {config.minScore} pontos para passar</p>
         {combo >= 3 && (
           <div className="mt-2 inline-flex items-center gap-2 bg-orange-100 text-orange-600 px-4 py-1 rounded-full animate-bounce-gentle">
             <Target className="w-4 h-4" />
@@ -209,38 +219,51 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
         <div className="absolute bottom-0 left-1/3 text-5xl">🌲</div>
 
         {/* Mosquitoes */}
-        {mosquitoes.map(mosquito => (
-          <button
-            key={mosquito.id}
-            onClick={() => handleClick(mosquito)}
-            className={`
-              absolute transform -translate-x-1/2 -translate-y-1/2
-              transition-all duration-100 hover:scale-125 cursor-pointer
-              ${mosquito.isGood ? 'hover:rotate-12' : 'hover:scale-110'}
-            `}
-            style={{
-              left: `${mosquito.x}%`,
-              top: `${mosquito.y}%`,
-              fontSize: `${mosquito.size}px`,
-            }}
-          >
-            {mosquito.isGood ? '🦋' : '🦟'}
-          </button>
-        ))}
+        {mosquitoes.map(mosquito => {
+          const age = Date.now() - mosquito.createdAt;
+          const remainingLife = config.mosquitoLifetime - age;
+          const opacity = remainingLife < 1000 ? remainingLife / 1000 : 1;
+          
+          return (
+            <button
+              key={mosquito.id}
+              onClick={() => handleClick(mosquito)}
+              className={`
+                absolute transform -translate-x-1/2 -translate-y-1/2
+                transition-all duration-100 hover:scale-125 cursor-pointer
+                ${mosquito.isGood ? 'hover:rotate-12' : 'hover:scale-110'}
+                ${remainingLife < 1000 ? 'animate-pulse' : ''}
+              `}
+              style={{
+                left: `${mosquito.x}%`,
+                top: `${mosquito.y}%`,
+                fontSize: `${mosquito.size}px`,
+                opacity: opacity,
+              }}
+            >
+              {mosquito.isGood ? '🦋' : '🦟'}
+            </button>
+          );
+        })}
 
         {/* Game Over Overlay */}
         {gameOver && (
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center">
             <div className="bg-card rounded-3xl p-8 text-center shadow-card animate-scale-in">
               <div className="text-6xl mb-4">
-                {lives > 0 ? '⏰' : '💔'}
+                {lives > 0 ? (score + level * 100 >= config.minScore ? '🎉' : '⏰') : '💔'}
               </div>
               <h3 className="font-pearl text-3xl text-primary mb-2">
-                {lives > 0 ? 'Tempo Esgotado!' : 'Game Over!'}
+                {lives > 0 ? (score + level * 100 >= config.minScore ? 'Parabéns!' : 'Tempo Esgotado!') : 'Game Over!'}
               </h3>
-              <p className="text-xl text-muted-foreground mb-4">
+              <p className="text-xl text-muted-foreground mb-2">
                 Pontuação Final: <span className="font-bold text-secondary">{score + level * 100}</span>
               </p>
+              {score + level * 100 < config.minScore && (
+                <p className="text-sm text-destructive">
+                  Precisa de {config.minScore} pontos para passar
+                </p>
+              )}
             </div>
           </div>
         )}
@@ -249,6 +272,7 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
       {/* Instructions */}
       <div className="mt-4 text-center text-sm text-muted-foreground">
         <p>💡 Dica: Use repelentes Arecê para se proteger de mosquitos de verdade!</p>
+        <p className="text-xs mt-1">⚠️ Os mosquitos desaparecem após alguns segundos!</p>
       </div>
     </div>
   );

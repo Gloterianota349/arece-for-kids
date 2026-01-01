@@ -1,7 +1,7 @@
 import { Game } from '@/types/game';
 import { useGame } from '@/contexts/GameContext';
 import { Link } from 'react-router-dom';
-import { Lock, Star, ChevronRight } from 'lucide-react';
+import { Lock, Star } from 'lucide-react';
 
 interface GameCardProps {
   game: Game;
@@ -66,13 +66,6 @@ export function GameCard({ game }: GameCardProps) {
                 style={{ width: `${(currentLevel / game.levels) * 100}%` }}
               />
             </div>
-          </div>
-        )}
-
-        {/* Play Arrow */}
-        {isUnlocked && (
-          <div className="absolute bottom-4 right-4 w-10 h-10 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-            <ChevronRight className="w-6 h-6 text-white" />
           </div>
         )}
       </div>

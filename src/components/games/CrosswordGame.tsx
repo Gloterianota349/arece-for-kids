@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { crosswordClues } from '@/data/gameData';
 import { Star, Check, HelpCircle, Lightbulb } from 'lucide-react';
 import { toast } from 'sonner';
@@ -23,12 +22,13 @@ type CrosswordCell = {
 
 export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps) {
   const clues = crosswordClues[`level${level}` as keyof typeof crosswordClues];
-  const gridSize = 8 + level;
+  const gridSize = 10 + level * 2;
   
   const [grid, setGrid] = useState<CrosswordCell[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
   const [solvedWords, setSolvedWords] = useState<number[]>([]);
   const [hintsUsed, setHintsUsed] = useState(0);
+  const [activeWordIndex, setActiveWordIndex] = useState<number | null>(null);
 
   const generateCrossword = () => {
     // Initialize empty grid
@@ -43,14 +43,22 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
       }))
     );
 
-    // Simple placement - place words one by one
+    // Place words with proper spacing
     let currentRow = 1;
     let currentCol = 1;
 
     clues.forEach((clue, index) => {
+      const wordLength = clue.word.length;
+      
       if (clue.direction === 'horizontal') {
-        for (let i = 0; i < clue.word.length; i++) {
-          if (currentCol + i < gridSize - 1) {
+        // Ensure word fits in grid
+        if (currentCol + wordLength > gridSize - 1) {
+          currentCol = 1;
+          currentRow += 3;
+        }
+        
+        for (let i = 0; i < wordLength; i++) {
+          if (currentRow < gridSize - 1 && currentCol + i < gridSize - 1) {
             newGrid[currentRow][currentCol + i] = {
               letter: clue.word[i],
               userLetter: '',
@@ -63,8 +71,14 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
         }
         currentRow += 2;
       } else {
-        for (let i = 0; i < clue.word.length; i++) {
-          if (currentRow + i < gridSize - 1) {
+        // Ensure word fits in grid
+        if (currentRow + wordLength > gridSize - 1) {
+          currentRow = 1;
+          currentCol += 4;
+        }
+        
+        for (let i = 0; i < wordLength; i++) {
+          if (currentRow + i < gridSize - 1 && currentCol < gridSize - 1) {
             const existingCell = newGrid[currentRow + i][currentCol];
             newGrid[currentRow + i][currentCol] = {
               letter: clue.word[i],
@@ -77,7 +91,7 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
           }
         }
         currentCol += 3;
-        if (currentCol >= gridSize - 3) {
+        if (currentCol >= gridSize - 4) {
           currentCol = 1;
           currentRow = 1;
         }
@@ -87,6 +101,7 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
     setGrid(newGrid);
     setSolvedWords([]);
     setHintsUsed(0);
+    setActiveWordIndex(null);
   };
 
   useEffect(() => {
@@ -122,6 +137,27 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
     checkCompletedWords(newGrid);
   };
 
+  const handleCellClick = (row: number, col: number) => {
+    const cell = grid[row][col];
+    if (cell.isBlocked) return;
+    
+    setSelectedCell({ row, col });
+    if (cell.wordIndices.length > 0) {
+      setActiveWordIndex(cell.wordIndices[0]);
+    }
+  };
+
+  const handleClueClick = (index: number) => {
+    setActiveWordIndex(index);
+    // Find first cell of this word
+    const firstCell = grid.flat().find(cell => 
+      cell.wordIndices.includes(index) && !cell.isBlocked
+    );
+    if (firstCell) {
+      setSelectedCell({ row: firstCell.row, col: firstCell.col });
+    }
+  };
+
   const checkCompletedWords = (currentGrid: CrosswordCell[][]) => {
     const newSolved: number[] = [...solvedWords];
 
@@ -149,7 +185,6 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
     const unsolvedClue = clues.findIndex((_, i) => !solvedWords.includes(i));
     if (unsolvedClue === -1) return;
 
-    const clue = clues[unsolvedClue];
     const wordCells = grid.flat().filter(cell => 
       cell.wordIndices.includes(unsolvedClue) && !cell.isBlocked
     );
@@ -167,6 +202,11 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
       checkCompletedWords(newGrid);
       toast.info('💡 Dica revelada!');
     }
+  };
+
+  const isCellActive = (cell: CrosswordCell) => {
+    if (activeWordIndex === null) return false;
+    return cell.wordIndices.includes(activeWordIndex) && !cell.isBlocked;
   };
 
   return (
@@ -208,16 +248,21 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
             {clues.map((clue, index) => (
               <div 
                 key={index}
+                onClick={() => handleClueClick(index)}
                 className={`
-                  p-3 rounded-xl transition-all duration-300
+                  p-3 rounded-xl transition-all duration-300 cursor-pointer
                   ${solvedWords.includes(index)
                     ? 'bg-accent/20 border border-accent'
-                    : 'bg-muted'
+                    : activeWordIndex === index
+                    ? 'bg-secondary/30 border-2 border-secondary ring-2 ring-secondary/50'
+                    : 'bg-muted hover:bg-muted/80'
                   }
                 `}
               >
                 <div className="flex items-start gap-2">
-                  <span className="w-6 h-6 bg-primary text-primary-foreground rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0">
+                  <span className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${
+                    activeWordIndex === index ? 'bg-secondary text-secondary-foreground' : 'bg-primary text-primary-foreground'
+                  }`}>
                     {index + 1}
                   </span>
                   <div className="flex-1">
@@ -225,7 +270,7 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
                       {clue.clue}
                     </p>
                     <p className="text-xs text-muted-foreground mt-1">
-                      ({clue.direction === 'horizontal' ? 'Horizontal' : 'Vertical'} - {clue.word.length} letras)
+                      ({clue.direction === 'horizontal' ? 'Horizontal' : 'Vertical'})
                     </p>
                   </div>
                   {solvedWords.includes(index) && (
@@ -238,24 +283,27 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
         </div>
 
         {/* Grid */}
-        <div className="bg-card rounded-3xl p-4 shadow-card">
+        <div className="bg-card rounded-3xl p-4 shadow-card overflow-x-auto">
           <div 
-            className="grid gap-1"
-            style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(0, 1fr))` }}
+            className="grid gap-1 min-w-fit"
+            style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(28px, 1fr))` }}
           >
             {grid.map((row, rowIndex) =>
               row.map((cell, colIndex) => (
                 <div
                   key={`${rowIndex}-${colIndex}`}
+                  onClick={() => handleCellClick(rowIndex, colIndex)}
                   className={`
-                    aspect-square flex items-center justify-center
+                    aspect-square flex items-center justify-center min-w-[28px] min-h-[28px]
                     ${cell.isBlocked 
                       ? 'bg-foreground/10' 
                       : cell.userLetter === cell.letter && cell.userLetter !== ''
                       ? 'bg-accent'
+                      : isCellActive(cell)
+                      ? 'bg-secondary/40 border-2 border-secondary ring-2 ring-secondary/30'
                       : 'bg-muted border-2 border-border'
                     }
-                    rounded-md
+                    rounded-md transition-all duration-200
                   `}
                 >
                   {!cell.isBlocked && (
@@ -263,11 +311,12 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
                       type="text"
                       value={cell.userLetter}
                       onChange={(e) => handleCellChange(rowIndex, colIndex, e.target.value)}
+                      onClick={() => handleCellClick(rowIndex, colIndex)}
                       maxLength={1}
                       className={`
                         w-full h-full text-center font-bold bg-transparent
                         focus:outline-none focus:ring-2 focus:ring-primary rounded-md
-                        text-sm md:text-base uppercase
+                        text-sm uppercase
                         ${cell.userLetter === cell.letter && cell.userLetter !== ''
                           ? 'text-accent-foreground'
                           : 'text-foreground'
