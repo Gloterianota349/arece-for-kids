@@ -135,6 +135,30 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
 
     // Check if any word is complete
     checkCompletedWords(newGrid);
+
+    // Auto-advance to next cell if a letter was typed
+    if (value && activeWordIndex !== null) {
+      const clue = clues[activeWordIndex];
+      const wordCells = newGrid.flat()
+        .filter(cell => cell.wordIndices.includes(activeWordIndex) && !cell.isBlocked)
+        .sort((a, b) => {
+          if (clue.direction === 'horizontal') return a.col - b.col;
+          return a.row - b.row;
+        });
+      
+      const currentIndex = wordCells.findIndex(c => c.row === row && c.col === col);
+      if (currentIndex < wordCells.length - 1) {
+        const nextCell = wordCells[currentIndex + 1];
+        setSelectedCell({ row: nextCell.row, col: nextCell.col });
+        // Focus the next input
+        setTimeout(() => {
+          const nextInput = document.querySelector(
+            `input[data-row="${nextCell.row}"][data-col="${nextCell.col}"]`
+          ) as HTMLInputElement;
+          nextInput?.focus();
+        }, 10);
+      }
+    }
   };
 
   const handleCellClick = (row: number, col: number) => {
@@ -289,43 +313,50 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
             style={{ gridTemplateColumns: `repeat(${gridSize}, minmax(28px, 1fr))` }}
           >
             {grid.map((row, rowIndex) =>
-              row.map((cell, colIndex) => (
-                <div
-                  key={`${rowIndex}-${colIndex}`}
-                  onClick={() => handleCellClick(rowIndex, colIndex)}
-                  className={`
-                    aspect-square flex items-center justify-center min-w-[28px] min-h-[28px]
-                    ${cell.isBlocked 
-                      ? 'bg-foreground/10' 
-                      : cell.userLetter === cell.letter && cell.userLetter !== ''
-                      ? 'bg-accent'
-                      : isCellActive(cell)
-                      ? 'bg-secondary/40 border-2 border-secondary ring-2 ring-secondary/30'
-                      : 'bg-muted border-2 border-border'
-                    }
-                    rounded-md transition-all duration-200
-                  `}
-                >
-                  {!cell.isBlocked && (
-                    <input
-                      type="text"
-                      value={cell.userLetter}
-                      onChange={(e) => handleCellChange(rowIndex, colIndex, e.target.value)}
-                      onClick={() => handleCellClick(rowIndex, colIndex)}
-                      maxLength={1}
-                      className={`
-                        w-full h-full text-center font-bold bg-transparent
-                        focus:outline-none focus:ring-2 focus:ring-primary rounded-md
-                        text-sm uppercase
-                        ${cell.userLetter === cell.letter && cell.userLetter !== ''
-                          ? 'text-accent-foreground'
-                          : 'text-foreground'
-                        }
-                      `}
-                    />
-                  )}
-                </div>
-              ))
+              row.map((cell, colIndex) => {
+                // Check if cell is part of a completed word
+                const isCellInCompletedWord = cell.wordIndices.some(idx => solvedWords.includes(idx));
+                
+                return (
+                  <div
+                    key={`${rowIndex}-${colIndex}`}
+                    onClick={() => handleCellClick(rowIndex, colIndex)}
+                    className={`
+                      aspect-square flex items-center justify-center min-w-[28px] min-h-[28px]
+                      ${cell.isBlocked 
+                        ? 'bg-foreground/10' 
+                        : isCellInCompletedWord
+                        ? 'bg-accent'
+                        : isCellActive(cell)
+                        ? 'bg-secondary/40 border-2 border-secondary ring-2 ring-secondary/30'
+                        : 'bg-muted border-2 border-border'
+                      }
+                      rounded-md transition-all duration-200
+                    `}
+                  >
+                    {!cell.isBlocked && (
+                      <input
+                        type="text"
+                        data-row={rowIndex}
+                        data-col={colIndex}
+                        value={cell.userLetter}
+                        onChange={(e) => handleCellChange(rowIndex, colIndex, e.target.value)}
+                        onClick={() => handleCellClick(rowIndex, colIndex)}
+                        maxLength={1}
+                        className={`
+                          w-full h-full text-center font-bold bg-transparent
+                          focus:outline-none focus:ring-2 focus:ring-primary rounded-md
+                          text-sm uppercase
+                          ${isCellInCompletedWord
+                            ? 'text-accent-foreground'
+                            : 'text-foreground'
+                          }
+                        `}
+                      />
+                    )}
+                  </div>
+                );
+              })
             )}
           </div>
         </div>

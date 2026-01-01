@@ -51,17 +51,11 @@ export function CharacterModal({ character, isOpen, onClose }: CharacterModalPro
       <DialogContent className="max-w-md p-0 overflow-hidden bg-background border-2 border-border">
         {/* Header with gradient */}
         <div className={`bg-gradient-to-br ${rarityColors[character.rarity]} p-8 relative`}>
-          {/* Rarity Stars - Top Left */}
-          {isUnlocked && (
-            <div className="absolute top-4 left-4 flex gap-1">
-              {Array.from({ length: rarityStars[character.rarity] }).map((_, i) => (
-                <Star 
-                  key={i} 
-                  className="w-5 h-5 fill-yellow-400 text-yellow-400 drop-shadow-md" 
-                />
-              ))}
-            </div>
-          )}
+          {/* Rarity Badge - Top Left */}
+          <div className="absolute top-4 left-4 flex items-center gap-1 bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full">
+            <RarityIcon className="w-4 h-4 text-white" />
+            <span className="text-white text-sm font-bold">{rarityLabels[character.rarity]}</span>
+          </div>
           
           {isUnlocked ? (
             <>
@@ -81,12 +75,6 @@ export function CharacterModal({ character, isOpen, onClose }: CharacterModalPro
               <Lock className="w-20 h-20 text-white/60" />
             </div>
           )}
-          
-          {/* Rarity Badge - Top Right */}
-          <div className="absolute top-4 right-4 flex items-center gap-1 bg-black/30 backdrop-blur-sm px-3 py-1 rounded-full">
-            <RarityIcon className="w-4 h-4 text-white" />
-            <span className="text-white text-sm font-bold">{rarityLabels[character.rarity]}</span>
-          </div>
         </div>
 
         <div className="p-6">
