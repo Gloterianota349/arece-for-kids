@@ -20,9 +20,19 @@ type CrosswordCell = {
   isCorrect?: boolean;
 };
 
+// Minimum words required to pass each level
+const levelMinWords = {
+  1: 3,
+  2: 3,
+  3: 4,
+  4: 4,
+  5: 5,
+};
+
 export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps) {
   const clues = crosswordClues[`level${level}` as keyof typeof crosswordClues];
   const gridSize = 10 + level * 2;
+  const minWords = levelMinWords[level as keyof typeof levelMinWords] || 3;
   
   const [grid, setGrid] = useState<CrosswordCell[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
@@ -111,8 +121,11 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
   useEffect(() => {
     if (solvedWords.length === clues.length && solvedWords.length > 0) {
       const score = calculateScore();
-      toast.success(`🎉 Parabéns! Você completou as palavras cruzadas!`);
-      setTimeout(() => onComplete(score), 1500);
+      const passed = solvedWords.length >= minWords;
+      if (passed) {
+        toast.success(`🎉 Parabéns! Você completou as palavras cruzadas!`);
+      }
+      setTimeout(() => onComplete(passed ? score : 0), 1500);
     }
   }, [solvedWords]);
 
@@ -268,9 +281,12 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
             <HelpCircle className="w-5 h-5" />
             Dicas
           </h3>
+          <p className="text-sm text-muted-foreground mb-3">
+            Meta: completar {minWords} palavras para passar
+          </p>
           <div className="space-y-3">
             {clues.map((clue, index) => (
-              <div 
+              <div
                 key={index}
                 onClick={() => handleClueClick(index)}
                 className={`

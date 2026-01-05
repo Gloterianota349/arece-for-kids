@@ -20,11 +20,11 @@ type Mosquito = {
 };
 
 const levelConfigs = {
-  1: { duration: 30, spawnRate: 1500, maxMosquitoes: 3, badChance: 0, mosquitoLifetime: 5000, minScore: 30 },
-  2: { duration: 30, spawnRate: 1200, maxMosquitoes: 5, badChance: 0.1, mosquitoLifetime: 4500, minScore: 50 },
-  3: { duration: 30, spawnRate: 1000, maxMosquitoes: 7, badChance: 0.15, mosquitoLifetime: 4000, minScore: 80 },
-  4: { duration: 30, spawnRate: 800, maxMosquitoes: 10, badChance: 0.2, mosquitoLifetime: 3500, minScore: 120 },
-  5: { duration: 30, spawnRate: 600, maxMosquitoes: 12, badChance: 0.25, mosquitoLifetime: 3000, minScore: 180 },
+  1: { duration: 30, spawnRate: 1500, maxMosquitoes: 3, badChance: 0, mosquitoLifetime: 5000, minScore: 100 },
+  2: { duration: 30, spawnRate: 1200, maxMosquitoes: 5, badChance: 0.1, mosquitoLifetime: 4500, minScore: 200 },
+  3: { duration: 30, spawnRate: 1000, maxMosquitoes: 7, badChance: 0.15, mosquitoLifetime: 4000, minScore: 350 },
+  4: { duration: 30, spawnRate: 800, maxMosquitoes: 10, badChance: 0.2, mosquitoLifetime: 3500, minScore: 500 },
+  5: { duration: 30, spawnRate: 600, maxMosquitoes: 12, badChance: 0.25, mosquitoLifetime: 3000, minScore: 700 },
 };
 
 export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {

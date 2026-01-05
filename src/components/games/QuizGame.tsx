@@ -10,8 +10,18 @@ interface QuizGameProps {
   onBack: () => void;
 }
 
+// Minimum correct answers required to pass each level
+const levelMinCorrect = {
+  1: 3,
+  2: 3,
+  3: 4,
+  4: 4,
+  5: 5,
+};
+
 export function QuizGame({ level, onComplete, onBack }: QuizGameProps) {
   const questions = quizQuestions[`level${level}` as keyof typeof quizQuestions];
+  const minCorrect = levelMinCorrect[level as keyof typeof levelMinCorrect] || 3;
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
@@ -41,7 +51,13 @@ export function QuizGame({ level, onComplete, onBack }: QuizGameProps) {
     if (currentQuestion + 1 >= questions.length) {
       setGameComplete(true);
       const score = calculateScore();
-      setTimeout(() => onComplete(score), 1500);
+      const passed = correctAnswers >= minCorrect;
+      if (passed) {
+        toast.success(`🎉 Você passou! Acertou ${correctAnswers} de ${questions.length}`);
+      } else {
+        toast.error(`Precisa acertar pelo menos ${minCorrect} perguntas para passar.`);
+      }
+      setTimeout(() => onComplete(passed ? score : 0), 1500);
     } else {
       setCurrentQuestion(c => c + 1);
       setSelectedAnswer(null);
@@ -56,21 +72,28 @@ export function QuizGame({ level, onComplete, onBack }: QuizGameProps) {
     return baseScore + levelBonus + perfectBonus;
   };
 
+  const passed = correctAnswers >= minCorrect;
+
   if (gameComplete) {
     return (
       <div className="max-w-2xl mx-auto text-center py-12">
         <div className="text-8xl mb-6">
-          {correctAnswers === questions.length ? '🏆' : correctAnswers >= questions.length / 2 ? '🎉' : '💪'}
+          {correctAnswers === questions.length ? '🏆' : passed ? '🎉' : '💪'}
         </div>
         <h2 className="font-pearl text-4xl text-primary mb-4">
-          {correctAnswers === questions.length ? 'Perfeito!' : 'Fase Concluída!'}
+          {correctAnswers === questions.length ? 'Perfeito!' : passed ? 'Fase Concluída!' : 'Tente Novamente!'}
         </h2>
-        <p className="text-xl text-muted-foreground mb-6">
+        <p className="text-xl text-muted-foreground mb-2">
           Você acertou {correctAnswers} de {questions.length} perguntas!
         </p>
+        {!passed && (
+          <p className="text-destructive mb-4">
+            Precisa acertar pelo menos {minCorrect} perguntas para passar.
+          </p>
+        )}
         <div className="flex items-center justify-center gap-2 mb-8">
           <Star className="w-8 h-8 fill-yellow-400 text-yellow-400" />
-          <span className="text-3xl font-bold text-secondary">{calculateScore()} pontos</span>
+          <span className="text-3xl font-bold text-secondary">{passed ? calculateScore() : 0} pontos</span>
         </div>
       </div>
     );
@@ -101,7 +124,7 @@ export function QuizGame({ level, onComplete, onBack }: QuizGameProps) {
       <div className="mb-8">
         <div className="flex justify-between text-sm text-muted-foreground mb-2">
           <span>Pergunta {currentQuestion + 1}/{questions.length}</span>
-          <span>Fase {level}</span>
+          <span>Fase {level} | Meta: {minCorrect} acertos</span>
         </div>
         <div className="h-3 bg-muted rounded-full overflow-hidden">
           <div 
