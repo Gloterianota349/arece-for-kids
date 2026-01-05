@@ -1,7 +1,13 @@
 import { Link, useLocation } from 'react-router-dom';
 import { useGame } from '@/contexts/GameContext';
-import { Home, Gamepad2, Users, BookOpen, Trophy, Key, Menu, X } from 'lucide-react';
-import { useState } from 'react';
+import { Home, Gamepad2, Users, BookOpen, Menu, X, Settings, Trophy, Key, ChevronDown } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
 
 export function Header() {
   const location = useLocation();
@@ -10,11 +16,28 @@ export function Header() {
   
   const selectedChar = getCharacterById(playerState.selectedCharacter || 'gota');
   
-  const navItems = [
+  // Desktop navigation (without achievements and code - moved to profile dropdown)
+  const desktopNavItems = [
     { path: '/', label: 'Início', icon: Home },
     { path: '/games', label: 'Jogos', icon: Gamepad2 },
     { path: '/characters', label: 'Personagens', icon: Users },
     { path: '/learn', label: 'Aprender', icon: BookOpen },
+  ];
+
+  // Mobile navigation (without settings - added to menu, achievements and code stay)
+  const mobileNavItems = [
+    { path: '/', label: 'Início', icon: Home },
+    { path: '/games', label: 'Jogos', icon: Gamepad2 },
+    { path: '/characters', label: 'Personagens', icon: Users },
+    { path: '/learn', label: 'Aprender', icon: BookOpen },
+    { path: '/achievements', label: 'Conquistas', icon: Trophy },
+    { path: '/redeem', label: 'Código', icon: Key },
+    { path: '/settings', label: 'Configurações', icon: Settings },
+  ];
+
+  // Profile dropdown items (desktop only)
+  const profileMenuItems = [
+    { path: '/settings', label: 'Configurações', icon: Settings },
     { path: '/achievements', label: 'Conquistas', icon: Trophy },
     { path: '/redeem', label: 'Código', icon: Key },
   ];
@@ -33,7 +56,7 @@ export function Header() {
 
           {/* Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1">
-            {navItems.map(item => {
+            {desktopNavItems.map(item => {
               const Icon = item.icon;
               const isActive = location.pathname === item.path;
               return (
@@ -57,12 +80,46 @@ export function Header() {
 
           {/* Player Info */}
           <div className="flex items-center gap-3">
-            <div className="hidden sm:flex items-center gap-2 bg-muted px-3 py-1.5 rounded-full">
+            {/* Mobile Avatar (no dropdown) */}
+            <div className="flex sm:hidden items-center gap-2 bg-muted px-3 py-1.5 rounded-full">
               <span className="text-lg">{selectedChar?.emoji || '💧'}</span>
               <span className="text-sm font-medium text-foreground">
                 {playerState.nickname || 'Jogador'}
               </span>
             </div>
+
+            {/* Desktop Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="hidden sm:flex items-center gap-2 bg-muted px-3 py-1.5 rounded-full hover:bg-muted/80 transition-colors cursor-pointer">
+                  <span className="text-lg">{selectedChar?.emoji || '💧'}</span>
+                  <span className="text-sm font-medium text-foreground">
+                    {playerState.nickname || 'Jogador'}
+                  </span>
+                  <ChevronDown className="w-4 h-4 text-muted-foreground" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48">
+                {profileMenuItems.map(item => {
+                  const Icon = item.icon;
+                  const isActive = location.pathname === item.path;
+                  return (
+                    <DropdownMenuItem key={item.path} asChild>
+                      <Link
+                        to={item.path}
+                        className={`flex items-center gap-2 w-full ${
+                          isActive ? 'text-primary font-medium' : ''
+                        }`}
+                      >
+                        <Icon className="w-4 h-4" />
+                        <span>{item.label}</span>
+                      </Link>
+                    </DropdownMenuItem>
+                  );
+                })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+
             <div className="flex items-center gap-1 bg-secondary/20 px-3 py-1.5 rounded-full">
               <span className="text-lg">⭐</span>
               <span className="text-sm font-bold text-secondary">{playerState.totalPoints}</span>
@@ -82,7 +139,7 @@ export function Header() {
         {menuOpen && (
           <nav className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="grid grid-cols-2 gap-2">
-              {navItems.map(item => {
+              {mobileNavItems.map(item => {
                 const Icon = item.icon;
                 const isActive = location.pathname === item.path;
                 return (

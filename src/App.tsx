@@ -11,6 +11,7 @@ import CharactersPage from "./pages/CharactersPage";
 import LearnPage from "./pages/LearnPage";
 import AchievementsPage from "./pages/AchievementsPage";
 import RedeemPage from "./pages/RedeemPage";
+import SettingsPage from "./pages/SettingsPage";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -30,6 +31,7 @@ const App = () => (
             <Route path="/learn" element={<LearnPage />} />
             <Route path="/achievements" element={<AchievementsPage />} />
             <Route path="/redeem" element={<RedeemPage />} />
+            <Route path="/settings" element={<SettingsPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
