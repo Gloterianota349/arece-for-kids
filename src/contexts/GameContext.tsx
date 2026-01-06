@@ -1,7 +1,9 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
 import { PlayerState, GameProgress } from '@/types/game';
 import { characters, games, achievements } from '@/data/gameData';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from './AuthContext';
 
 interface AchievementProgress {
   [achievementId: string]: number;
@@ -44,6 +46,8 @@ const defaultPlayerState: PlayerState = {
 };
 
 export function GameProvider({ children }: { children: ReactNode }) {
+  const { user } = useAuth();
+  const [isLoading, setIsLoading] = useState(true);
   const [playerState, setPlayerState] = useState<PlayerState>(() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
@@ -68,6 +72,82 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return {};
   });
 
+  // Sync with database when user is logged in
+  const syncFromDatabase = useCallback(async () => {
+    if (!user) {
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { data, error } = await supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .single();
+
+      if (error && error.code !== 'PGRST116') {
+        console.error('Error fetching progress:', error);
+        return;
+      }
+
+      if (data) {
+        setPlayerState({
+          nickname: data.nickname || '',
+          selectedCharacter: data.selected_character || 'gota',
+          unlockedCharacters: data.unlocked_characters || ['gota'],
+          unlockedGames: data.unlocked_games || ['memory'],
+          achievements: data.achievements || [],
+          gameProgress: (data.game_progress as unknown as GameProgress[]) || [],
+          coins: data.coins || 0,
+          totalPoints: data.total_points || 0,
+        });
+        setAchievementProgress((data.achievement_progress as unknown as AchievementProgress) || {});
+      }
+    } catch (error) {
+      console.error('Sync error:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, [user]);
+
+  // Save to database when user is logged in
+  const syncToDatabase = useCallback(async () => {
+    if (!user) return;
+
+    try {
+      // Use type assertion to bypass strict type checking for JSON columns
+      const updateData = {
+        nickname: playerState.nickname,
+        selected_character: playerState.selectedCharacter,
+        unlocked_characters: playerState.unlockedCharacters,
+        unlocked_games: playerState.unlockedGames,
+        achievements: playerState.achievements,
+        achievement_progress: JSON.parse(JSON.stringify(achievementProgress)),
+        game_progress: JSON.parse(JSON.stringify(playerState.gameProgress)),
+        coins: playerState.coins,
+        total_points: playerState.totalPoints,
+      };
+
+      const { error } = await supabase
+        .from('user_progress')
+        .update(updateData)
+        .eq('user_id', user.id);
+      
+      if (error) {
+        console.error('Update error:', error);
+      }
+    } catch (error) {
+      console.error('Save error:', error);
+    }
+  }, [user, playerState, achievementProgress]);
+
+  // Load from database when user logs in
+  useEffect(() => {
+    syncFromDatabase();
+  }, [syncFromDatabase]);
+
+  // Save to localStorage always
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(playerState));
   }, [playerState]);
@@ -75,6 +155,17 @@ export function GameProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     localStorage.setItem(ACHIEVEMENT_PROGRESS_KEY, JSON.stringify(achievementProgress));
   }, [achievementProgress]);
+
+  // Debounced save to database
+  useEffect(() => {
+    if (!user || isLoading) return;
+    
+    const timeoutId = setTimeout(() => {
+      syncToDatabase();
+    }, 1000);
+
+    return () => clearTimeout(timeoutId);
+  }, [playerState, achievementProgress, user, isLoading, syncToDatabase]);
 
   const unlockWithCode = (code: string): boolean => {
     const upperCode = code.toUpperCase().trim();

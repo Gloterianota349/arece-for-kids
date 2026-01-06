@@ -118,16 +118,18 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
     generateCrossword();
   }, [level]);
 
+  const [showGameOver, setShowGameOver] = useState(false);
+  const [finalScore, setFinalScore] = useState(0);
+  const [passed, setPassed] = useState(false);
+
   useEffect(() => {
     if (solvedWords.length === clues.length && solvedWords.length > 0) {
       const score = calculateScore();
-      const passed = score >= minScore;
-      if (passed) {
-        toast.success(`🎉 Parabéns! Você completou as palavras cruzadas!`);
-      } else {
-        toast.error(`Pontuação ${score} insuficiente. Precisa de ${minScore} pontos para passar.`);
-      }
-      setTimeout(() => onComplete(passed ? score : 0), 1500);
+      const didPass = score >= minScore;
+      setFinalScore(score);
+      setPassed(didPass);
+      setShowGameOver(true);
+      setTimeout(() => onComplete(didPass ? score : 0), 2000);
     }
   }, [solvedWords]);
 
@@ -379,6 +381,28 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
           </div>
         </div>
       </div>
+
+      {/* Game Over Overlay */}
+      {showGameOver && (
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50">
+          <div className="bg-card rounded-3xl p-8 text-center shadow-card animate-scale-in max-w-md mx-4">
+            <div className="text-6xl mb-4">
+              {passed ? '🎉' : '😔'}
+            </div>
+            <h3 className="font-pearl text-3xl text-primary mb-2">
+              {passed ? 'Parabéns!' : 'Não foi dessa vez!'}
+            </h3>
+            <p className="text-xl text-muted-foreground mb-2">
+              Pontuação Final: <span className="font-bold text-secondary">{finalScore}</span>
+            </p>
+            {!passed && (
+              <p className="text-sm text-destructive">
+                Precisa de {minScore} pontos para passar
+              </p>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
