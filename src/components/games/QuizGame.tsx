@@ -12,11 +12,11 @@ interface QuizGameProps {
 
 // Minimum correct answers required to pass each level
 const levelMinCorrect = {
-  1: 3,
-  2: 3,
-  3: 4,
-  4: 4,
-  5: 5,
+  1: 1,
+  2: 1,
+  3: 2,
+  4: 2,
+  5: 3,
 };
 
 export function QuizGame({ level, onComplete, onBack }: QuizGameProps) {

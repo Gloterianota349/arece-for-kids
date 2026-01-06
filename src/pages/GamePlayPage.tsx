@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 export default function GamePlayPage() {
   const { gameId } = useParams();
   const navigate = useNavigate();
-  const { isGameUnlocked, playerState, updateGameProgress, addPoints, addCoins, unlockAchievement } = useGame();
+  const { isGameUnlocked, playerState, updateGameProgress, addPoints, addCoins, unlockAchievement, incrementAchievementProgress } = useGame();
   
   const game = games.find(g => g.id === gameId);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
@@ -64,17 +64,46 @@ export default function GamePlayPage() {
   const handleLevelComplete = (score: number) => {
     if (selectedLevel === null) return;
     
-    updateGameProgress(game.id, selectedLevel, score);
-    addPoints(score);
-    addCoins(Math.floor(score / 10));
-    
-    // Check achievements
-    if (!playerState.achievements.includes('first_game')) {
-      unlockAchievement('first_game');
-    }
-    
-    if (selectedLevel >= 5) {
-      toast.success(`🏆 Você completou todas as fases de ${game.name}!`);
+    // Only update progress and give rewards if score > 0 (player passed)
+    if (score > 0) {
+      updateGameProgress(game.id, selectedLevel, score);
+      addPoints(score);
+      addCoins(Math.floor(score / 10));
+      
+      // Check first game achievement
+      if (!playerState.achievements.includes('first_game')) {
+        unlockAchievement('first_game');
+      }
+      
+      // Check game-specific achievements
+      if (game.id === 'memory') {
+        // Track memory game progress
+        incrementAchievementProgress('memory_master', 1);
+      }
+      
+      if (game.id === 'quiz') {
+        // Track quiz progress (correct answers are in score calculation)
+        incrementAchievementProgress('quiz_genius', Math.floor(score / 200));
+      }
+      
+      if (game.id === 'mosquito') {
+        // Track mosquito kills (estimate based on score)
+        incrementAchievementProgress('mosquito_slayer', Math.floor(score / 10));
+      }
+      
+      if (game.id === 'wordsearch') {
+        // Track words found (estimate based on score)
+        incrementAchievementProgress('word_hunter', Math.floor(score / 50));
+      }
+      
+      // Check for perfect score achievement
+      if (score >= 1000) {
+        unlockAchievement('perfect_score');
+      }
+      
+      if (selectedLevel >= 5) {
+        toast.success(`🏆 Você completou todas as fases de ${game.name}!`);
+      }
     }
     
     setIsPlaying(false);
