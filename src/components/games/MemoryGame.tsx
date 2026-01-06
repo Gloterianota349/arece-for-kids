@@ -73,9 +73,10 @@ export function MemoryGame({ level, onComplete, onBack }: MemoryGameProps) {
   const calculateScore = () => {
     const baseScore = 1000;
     const movePenalty = moves * 10;
-    const timePenalty = time * 2;
+    // Time penalty is fixed based on completion, not increasing
     const levelBonus = level * 200;
-    return Math.max(100, baseScore - movePenalty - timePenalty + levelBonus);
+    // Calculate penalty based on moves only, no time-based increasing score
+    return Math.max(100, baseScore - movePenalty + levelBonus);
   };
 
   const handleCardClick = (cardId: number) => {

@@ -20,19 +20,19 @@ type CrosswordCell = {
   isCorrect?: boolean;
 };
 
-// Minimum words required to pass each level
-const levelMinWords = {
-  1: 3,
-  2: 3,
-  3: 4,
-  4: 4,
-  5: 5,
+// Minimum score required to pass each level (penalizes hint usage)
+const levelMinScore = {
+  1: 200,
+  2: 300,
+  3: 400,
+  4: 500,
+  5: 600,
 };
 
 export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps) {
   const clues = crosswordClues[`level${level}` as keyof typeof crosswordClues];
   const gridSize = 10 + level * 2;
-  const minWords = levelMinWords[level as keyof typeof levelMinWords] || 3;
+  const minScore = levelMinScore[level as keyof typeof levelMinScore] || 200;
   
   const [grid, setGrid] = useState<CrosswordCell[][]>([]);
   const [selectedCell, setSelectedCell] = useState<{ row: number; col: number } | null>(null);
@@ -121,9 +121,11 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
   useEffect(() => {
     if (solvedWords.length === clues.length && solvedWords.length > 0) {
       const score = calculateScore();
-      const passed = solvedWords.length >= minWords;
+      const passed = score >= minScore;
       if (passed) {
         toast.success(`🎉 Parabéns! Você completou as palavras cruzadas!`);
+      } else {
+        toast.error(`Pontuação ${score} insuficiente. Precisa de ${minScore} pontos para passar.`);
       }
       setTimeout(() => onComplete(passed ? score : 0), 1500);
     }
@@ -282,7 +284,7 @@ export function CrosswordGame({ level, onComplete, onBack }: CrosswordGameProps)
             Dicas
           </h3>
           <p className="text-sm text-muted-foreground mb-3">
-            Meta: completar {minWords} palavras para passar
+            Meta: {minScore} pontos para passar (dicas reduzem pontuação)
           </p>
           <div className="space-y-3">
             {clues.map((clue, index) => (

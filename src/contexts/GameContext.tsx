@@ -1,15 +1,21 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { PlayerState, GameProgress } from '@/types/game';
-import { characters, games, achievements, UNLOCK_CODES } from '@/data/gameData';
+import { characters, games, achievements } from '@/data/gameData';
 import { toast } from 'sonner';
+
+interface AchievementProgress {
+  [achievementId: string]: number;
+}
 
 interface GameContextType {
   playerState: PlayerState;
+  achievementProgress: AchievementProgress;
   unlockWithCode: (code: string) => boolean;
   selectCharacter: (characterId: string) => void;
   updateGameProgress: (gameId: string, level: number, score: number) => void;
   unlockAchievement: (achievementId: string) => void;
   updateAchievementProgress: (achievementId: string, progress: number) => void;
+  incrementAchievementProgress: (achievementId: string, amount?: number) => void;
   addCoins: (amount: number) => void;
   addPoints: (amount: number) => void;
   setNickname: (name: string) => void;
@@ -18,11 +24,13 @@ interface GameContextType {
   getCharacterById: (id: string) => typeof characters[0] | undefined;
   getGameById: (id: string) => typeof games[0] | undefined;
   getAchievements: () => typeof achievements;
+  getAchievementProgress: (achievementId: string) => number;
 }
 
 const GameContext = createContext<GameContextType | undefined>(undefined);
 
 const STORAGE_KEY = 'arece_player_state';
+const ACHIEVEMENT_PROGRESS_KEY = 'arece_achievement_progress';
 
 const defaultPlayerState: PlayerState = {
   nickname: '',
@@ -48,9 +56,25 @@ export function GameProvider({ children }: { children: ReactNode }) {
     return defaultPlayerState;
   });
 
+  const [achievementProgress, setAchievementProgress] = useState<AchievementProgress>(() => {
+    const saved = localStorage.getItem(ACHIEVEMENT_PROGRESS_KEY);
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return {};
+      }
+    }
+    return {};
+  });
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(playerState));
   }, [playerState]);
+
+  useEffect(() => {
+    localStorage.setItem(ACHIEVEMENT_PROGRESS_KEY, JSON.stringify(achievementProgress));
+  }, [achievementProgress]);
 
   const unlockWithCode = (code: string): boolean => {
     const upperCode = code.toUpperCase().trim();
@@ -98,6 +122,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
   };
 
   const updateGameProgress = (gameId: string, level: number, score: number) => {
+    // Only update progress if score > 0 (player passed the level)
+    if (score <= 0) return;
+    
     setPlayerState(prev => {
       const existingProgress = prev.gameProgress.find(p => p.gameId === gameId);
       
@@ -144,18 +171,49 @@ export function GameProvider({ children }: { children: ReactNode }) {
       
       const achievement = achievements.find(a => a.id === achievementId);
       if (achievement) {
+        // Set progress to max when unlocked
+        setAchievementProgress(prev => ({
+          ...prev,
+          [achievementId]: achievement.maxProgress,
+        }));
         toast.success(`🏆 Conquista desbloqueada: ${achievement.name}!`);
       }
     }
   };
 
   const updateAchievementProgress = (achievementId: string, progress: number) => {
-    // This would need a more complex state structure to track progress
-    // For now, we just unlock when max is reached
     const achievement = achievements.find(a => a.id === achievementId);
-    if (achievement && progress >= achievement.maxProgress) {
+    if (!achievement) return;
+    
+    setAchievementProgress(prev => {
+      const newProgress = Math.min(progress, achievement.maxProgress);
+      return { ...prev, [achievementId]: newProgress };
+    });
+    
+    if (progress >= achievement.maxProgress) {
       unlockAchievement(achievementId);
     }
+  };
+
+  const incrementAchievementProgress = (achievementId: string, amount: number = 1) => {
+    const achievement = achievements.find(a => a.id === achievementId);
+    if (!achievement) return;
+    
+    const currentProgress = achievementProgress[achievementId] || 0;
+    const newProgress = currentProgress + amount;
+    
+    setAchievementProgress(prev => ({
+      ...prev,
+      [achievementId]: Math.min(newProgress, achievement.maxProgress),
+    }));
+    
+    if (newProgress >= achievement.maxProgress && !playerState.achievements.includes(achievementId)) {
+      unlockAchievement(achievementId);
+    }
+  };
+
+  const getAchievementProgress = (achievementId: string): number => {
+    return achievementProgress[achievementId] || 0;
   };
 
   const addCoins = (amount: number) => {
@@ -177,17 +235,44 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const getAchievements = () => achievements.map(a => ({
     ...a,
     unlocked: playerState.achievements.includes(a.id),
+    progress: achievementProgress[a.id] || 0,
   }));
+
+  // Check character-related achievements on character unlock
+  useEffect(() => {
+    const unlockedCount = playerState.unlockedCharacters.length;
+    
+    // First character achievement
+    if (unlockedCount >= 1 && !playerState.achievements.includes('first_character')) {
+      unlockAchievement('first_character');
+    }
+    
+    // Collector achievement (5 characters)
+    if (unlockedCount >= 5 && !playerState.achievements.includes('collector')) {
+      unlockAchievement('collector');
+    }
+    
+    // Legendary hunter
+    const hasLegendary = playerState.unlockedCharacters.some(charId => {
+      const char = characters.find(c => c.id === charId);
+      return char?.rarity === 'legendary';
+    });
+    if (hasLegendary && !playerState.achievements.includes('legendary_hunter')) {
+      unlockAchievement('legendary_hunter');
+    }
+  }, [playerState.unlockedCharacters]);
 
   return (
     <GameContext.Provider
       value={{
         playerState,
+        achievementProgress,
         unlockWithCode,
         selectCharacter,
         updateGameProgress,
         unlockAchievement,
         updateAchievementProgress,
+        incrementAchievementProgress,
         addCoins,
         addPoints,
         setNickname,
@@ -196,6 +281,7 @@ export function GameProvider({ children }: { children: ReactNode }) {
         getCharacterById,
         getGameById,
         getAchievements,
+        getAchievementProgress,
       }}
     >
       {children}

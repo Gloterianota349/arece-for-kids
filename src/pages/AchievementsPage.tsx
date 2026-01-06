@@ -4,7 +4,7 @@ import { achievements } from '@/data/gameData';
 import { Trophy, Lock, Star, Gamepad2, Users, BookOpen, Sparkles } from 'lucide-react';
 
 export default function AchievementsPage() {
-  const { playerState } = useGame();
+  const { playerState, getAchievementProgress } = useGame();
   
   const unlockedCount = playerState.achievements.length;
   const totalAchievements = achievements.length;
@@ -92,7 +92,7 @@ export default function AchievementsPage() {
               <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
                 {categoryAchievements.map((achievement, index) => {
                   const isUnlocked = playerState.achievements.includes(achievement.id);
-                  
+                  const progress = getAchievementProgress(achievement.id);
                   return (
                     <div
                       key={achievement.id}
@@ -129,14 +129,14 @@ export default function AchievementsPage() {
                             <div className="flex justify-between text-xs text-muted-foreground mb-1">
                               <span>Progresso</span>
                               <span>
-                                {isUnlocked ? achievement.maxProgress : 0}/{achievement.maxProgress}
+                                {isUnlocked ? achievement.maxProgress : progress}/{achievement.maxProgress}
                               </span>
                             </div>
                             <div className="h-2 bg-muted rounded-full overflow-hidden">
                               <div 
                                 className={`h-full rounded-full transition-all duration-500 bg-gradient-to-r ${color}`}
                                 style={{ 
-                                  width: `${isUnlocked ? 100 : 0}%` 
+                                  width: `${isUnlocked ? 100 : (progress / achievement.maxProgress) * 100}%` 
                                 }}
                               />
                             </div>
