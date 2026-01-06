@@ -1,20 +1,31 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useGame } from '@/contexts/GameContext';
-import { Home, Gamepad2, Users, BookOpen, Menu, X, Settings, Trophy, Key, ChevronDown } from 'lucide-react';
-import { useState, useRef, useEffect } from 'react';
+import { useAuth } from '@/contexts/AuthContext';
+import { Home, Gamepad2, Users, BookOpen, Menu, X, Settings, Trophy, Key, ChevronDown, LogIn, LogOut, Book } from 'lucide-react';
+import { useState } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuTrigger,
+  DropdownMenuSeparator,
 } from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 export function Header() {
   const location = useLocation();
+  const navigate = useNavigate();
   const { playerState, getCharacterById } = useGame();
+  const { user, signOut } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
   
   const selectedChar = getCharacterById(playerState.selectedCharacter || 'gota');
+
+  const handleSignOut = async () => {
+    await signOut();
+    toast.success('Até logo! 👋');
+    navigate('/');
+  };
   
   // Desktop navigation (without achievements and code - moved to profile dropdown)
   const desktopNavItems = [
@@ -22,14 +33,16 @@ export function Header() {
     { path: '/games', label: 'Jogos', icon: Gamepad2 },
     { path: '/characters', label: 'Personagens', icon: Users },
     { path: '/learn', label: 'Aprender', icon: BookOpen },
+    { path: '/stories', label: 'Histórias', icon: Book },
   ];
 
-  // Mobile navigation (without settings - added to menu, achievements and code stay)
+  // Mobile navigation
   const mobileNavItems = [
     { path: '/', label: 'Início', icon: Home },
     { path: '/games', label: 'Jogos', icon: Gamepad2 },
     { path: '/characters', label: 'Personagens', icon: Users },
     { path: '/learn', label: 'Aprender', icon: BookOpen },
+    { path: '/stories', label: 'Histórias', icon: Book },
     { path: '/achievements', label: 'Conquistas', icon: Trophy },
     { path: '/redeem', label: 'Código', icon: Key },
     { path: '/settings', label: 'Configurações', icon: Settings },
@@ -117,6 +130,20 @@ export function Header() {
                     </DropdownMenuItem>
                   );
                 })}
+                <DropdownMenuSeparator />
+                {user ? (
+                  <DropdownMenuItem onClick={handleSignOut} className="text-destructive">
+                    <LogOut className="w-4 h-4 mr-2" />
+                    <span>Sair</span>
+                  </DropdownMenuItem>
+                ) : (
+                  <DropdownMenuItem asChild>
+                    <Link to="/auth" className="flex items-center gap-2 w-full">
+                      <LogIn className="w-4 h-4" />
+                      <span>Entrar</span>
+                    </Link>
+                  </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
 
@@ -160,6 +187,27 @@ export function Header() {
                   </Link>
                 );
               })}
+              {user ? (
+                <button
+                  onClick={() => {
+                    setMenuOpen(false);
+                    handleSignOut();
+                  }}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-destructive hover:bg-destructive/10"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span>Sair</span>
+                </button>
+              ) : (
+                <Link
+                  to="/auth"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex items-center gap-2 px-4 py-3 rounded-xl font-medium text-primary hover:bg-primary/10"
+                >
+                  <LogIn className="w-5 h-5" />
+                  <span>Entrar</span>
+                </Link>
+              )}
             </div>
           </nav>
         )}
