@@ -12,8 +12,7 @@ export default function LearnPage() {
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [readArticles, setReadArticles] = useState<Set<string>>(new Set());
-  const { addPoints, unlockAchievement, incrementAchievementProgress, playerState } = useGame();
+  const { addPoints, unlockAchievement, trackArticleRead, playerState } = useGame();
 
   const handleQuizAnswer = (answerIndex: number) => {
     if (showAnswer || !selectedContent?.quiz) return;
@@ -39,10 +38,7 @@ export default function LearnPage() {
       setShowAnswer(false);
     } else {
       // Completed all quizzes for this content - track article as read
-      if (!readArticles.has(selectedContent.id)) {
-        setReadArticles(prev => new Set([...prev, selectedContent.id]));
-        incrementAchievementProgress('curious_mind', 1);
-      }
+      trackArticleRead(selectedContent.id);
       
       // Check nature_lover achievement for "Como Preservar a Natureza" section
       if (selectedContent.id === 'nature-preservation') {

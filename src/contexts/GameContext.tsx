@@ -6,7 +6,14 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from './AuthContext';
 
 interface AchievementProgress {
-  [achievementId: string]: number;
+  [key: string]: number | string[] | string | undefined;
+}
+
+interface TrackingData {
+  readArticles: string[];
+  completedStories: string[];
+  lastPlayDate: string;
+  consecutiveDays: number;
 }
 
 interface GameContextType {
@@ -18,6 +25,9 @@ interface GameContextType {
   unlockAchievement: (achievementId: string) => void;
   updateAchievementProgress: (achievementId: string, progress: number) => void;
   incrementAchievementProgress: (achievementId: string, amount?: number) => void;
+  trackArticleRead: (articleId: string) => void;
+  trackStoryCompleted: (storyId: string) => void;
+  trackDailyPlay: () => void;
   addCoins: (amount: number) => void;
   addPoints: (amount: number) => void;
   setNickname: (name: string) => void;
@@ -290,7 +300,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
     const achievement = achievements.find(a => a.id === achievementId);
     if (!achievement) return;
     
-    const currentProgress = achievementProgress[achievementId] || 0;
+    const currentProgress = typeof achievementProgress[achievementId] === 'number' 
+      ? achievementProgress[achievementId] as number 
+      : 0;
     const newProgress = currentProgress + amount;
     
     setAchievementProgress(prev => ({
@@ -304,7 +316,93 @@ export function GameProvider({ children }: { children: ReactNode }) {
   };
 
   const getAchievementProgress = (achievementId: string): number => {
-    return achievementProgress[achievementId] || 0;
+    const progress = achievementProgress[achievementId];
+    return typeof progress === 'number' ? progress : 0;
+  };
+
+  const trackArticleRead = (articleId: string) => {
+    setAchievementProgress(prev => {
+      const rawReadArticles = prev.readArticles;
+      const readArticles: string[] = Array.isArray(rawReadArticles) ? rawReadArticles : [];
+      if (readArticles.includes(articleId)) {
+        return prev; // Already read this article
+      }
+      const newReadArticles = [...readArticles, articleId];
+      const newProgress = { 
+        ...prev, 
+        readArticles: newReadArticles,
+        curious_mind: newReadArticles.length,
+      };
+      
+      // Check if achievement should be unlocked
+      if (newReadArticles.length >= 3 && !playerState.achievements.includes('curious_mind')) {
+        unlockAchievement('curious_mind');
+      }
+      
+      return newProgress;
+    });
+  };
+
+  const trackStoryCompleted = (storyId: string) => {
+    setAchievementProgress(prev => {
+      const rawCompletedStories = prev.completedStories;
+      const completedStories: string[] = Array.isArray(rawCompletedStories) ? rawCompletedStories : [];
+      if (completedStories.includes(storyId)) {
+        return prev; // Already completed this story
+      }
+      const newCompletedStories = [...completedStories, storyId];
+      const newProgress = { 
+        ...prev, 
+        completedStories: newCompletedStories,
+        story_lover: newCompletedStories.length,
+      };
+      
+      // Check if achievement should be unlocked
+      if (newCompletedStories.length >= 3 && !playerState.achievements.includes('story_lover')) {
+        unlockAchievement('story_lover');
+      }
+      
+      return newProgress;
+    });
+  };
+
+  const trackDailyPlay = () => {
+    const today = new Date().toISOString().split('T')[0];
+    
+    setAchievementProgress(prev => {
+      const lastPlayDate = typeof prev.lastPlayDate === 'string' ? prev.lastPlayDate : '';
+      const rawConsecutiveDays = prev.consecutiveDays;
+      let consecutiveDays = typeof rawConsecutiveDays === 'number' ? rawConsecutiveDays : 0;
+      
+      if (lastPlayDate === today) {
+        return prev; // Already played today
+      }
+      
+      // Check if yesterday was played
+      const yesterday = new Date();
+      yesterday.setDate(yesterday.getDate() - 1);
+      const yesterdayStr = yesterday.toISOString().split('T')[0];
+      
+      if (lastPlayDate === yesterdayStr) {
+        consecutiveDays = consecutiveDays + 1;
+      } else {
+        consecutiveDays = 1; // Reset streak
+      }
+      
+      const newProgress = {
+        ...prev,
+        lastPlayDate: today,
+        consecutiveDays,
+        daily_player: consecutiveDays,
+      };
+      
+      // Check if achievement should be unlocked
+      if (consecutiveDays >= 7 && !playerState.achievements.includes('daily_player')) {
+        unlockAchievement('daily_player');
+      }
+      
+      return newProgress;
+    });
   };
 
   const addCoins = (amount: number) => {
@@ -323,11 +421,14 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const isCharacterUnlocked = (characterId: string) => playerState.unlockedCharacters.includes(characterId);
   const getCharacterById = (id: string) => characters.find(c => c.id === id);
   const getGameById = (id: string) => games.find(g => g.id === id);
-  const getAchievements = () => achievements.map(a => ({
-    ...a,
-    unlocked: playerState.achievements.includes(a.id),
-    progress: achievementProgress[a.id] || 0,
-  }));
+  const getAchievements = () => achievements.map(a => {
+    const progress = achievementProgress[a.id];
+    return {
+      ...a,
+      unlocked: playerState.achievements.includes(a.id),
+      progress: typeof progress === 'number' ? progress : 0,
+    };
+  });
 
   // Check character-related achievements on character unlock
   useEffect(() => {
@@ -365,6 +466,9 @@ export function GameProvider({ children }: { children: ReactNode }) {
         unlockAchievement,
         updateAchievementProgress,
         incrementAchievementProgress,
+        trackArticleRead,
+        trackStoryCompleted,
+        trackDailyPlay,
         addCoins,
         addPoints,
         setNickname,
