@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Header } from '@/components/Header';
 import { educationalContent } from '@/data/gameData';
 import { EducationalContent, QuizQuestion } from '@/types/game';
@@ -12,7 +12,8 @@ export default function LearnPage() {
   const [currentQuizIndex, setCurrentQuizIndex] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showAnswer, setShowAnswer] = useState(false);
-  const { addPoints, unlockAchievement, playerState } = useGame();
+  const [readArticles, setReadArticles] = useState<Set<string>>(new Set());
+  const { addPoints, unlockAchievement, incrementAchievementProgress, playerState } = useGame();
 
   const handleQuizAnswer = (answerIndex: number) => {
     if (showAnswer || !selectedContent?.quiz) return;
@@ -37,10 +38,17 @@ export default function LearnPage() {
       setSelectedAnswer(null);
       setShowAnswer(false);
     } else {
-      // Completed all quizzes for this content
-      if (!playerState.achievements.includes('curious_mind')) {
-        unlockAchievement('curious_mind');
+      // Completed all quizzes for this content - track article as read
+      if (!readArticles.has(selectedContent.id)) {
+        setReadArticles(prev => new Set([...prev, selectedContent.id]));
+        incrementAchievementProgress('curious_mind', 1);
       }
+      
+      // Check nature_lover achievement for "Como Preservar a Natureza" section
+      if (selectedContent.id === 'nature-preservation') {
+        unlockAchievement('nature_lover');
+      }
+      
       setSelectedContent(null);
       setCurrentQuizIndex(0);
       setSelectedAnswer(null);

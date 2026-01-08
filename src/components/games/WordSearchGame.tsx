@@ -1,8 +1,9 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { wordSearchWords } from '@/data/gameData';
 import { Star, Check, RotateCcw } from 'lucide-react';
 import { toast } from 'sonner';
+import { useGame } from '@/contexts/GameContext';
 
 interface WordSearchGameProps {
   level: number;
@@ -22,6 +23,8 @@ type Cell = {
 export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProps) {
   const words = wordSearchWords[`level${level}` as keyof typeof wordSearchWords];
   const gridSize = 8 + level * 2;
+  const { incrementAchievementProgress } = useGame();
+  const wordsFoundThisGameRef = useRef(0);
   
   const [grid, setGrid] = useState<Cell[][]>([]);
   const [selectedCells, setSelectedCells] = useState<Cell[]>([]);
@@ -95,6 +98,7 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
     setWordPositions(positions);
     setFoundWords([]);
     setSelectedCells([]);
+    wordsFoundThisGameRef.current = 0;
   };
 
   useEffect(() => {
@@ -104,6 +108,8 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
   useEffect(() => {
     if (foundWords.length === words.length && foundWords.length > 0) {
       const score = calculateScore();
+      // Track words found for achievement
+      incrementAchievementProgress('word_hunter', wordsFoundThisGameRef.current);
       toast.success(`🎉 Parabéns! Você encontrou todas as palavras!`);
       setTimeout(() => onComplete(score), 1500);
     }

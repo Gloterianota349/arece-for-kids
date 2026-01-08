@@ -9,31 +9,35 @@ export default function AchievementsPage() {
   const unlockedCount = playerState.achievements.length;
   const totalAchievements = achievements.length;
   
-  const categoryIcons = {
+  const categoryIcons: Record<string, any> = {
     games: Gamepad2,
     collection: Users,
     learning: BookOpen,
+    stories: BookOpen,
     special: Sparkles,
   };
   
-  const categoryNames = {
+  const categoryNames: Record<string, string> = {
     games: 'Jogos',
     collection: 'Coleção',
     learning: 'Aprendizado',
+    stories: 'Histórias',
     special: 'Especial',
   };
   
-  const categoryColors = {
+  const categoryColors: Record<string, string> = {
     games: 'from-blue-400 to-cyan-500',
     collection: 'from-purple-400 to-pink-500',
     learning: 'from-green-400 to-emerald-500',
+    stories: 'from-indigo-400 to-purple-500',
     special: 'from-yellow-400 to-orange-500',
   };
 
-  const groupedAchievements = {
+  const groupedAchievements: Record<string, typeof achievements> = {
     games: achievements.filter(a => a.category === 'games'),
     collection: achievements.filter(a => a.category === 'collection'),
     learning: achievements.filter(a => a.category === 'learning'),
+    stories: achievements.filter(a => a.category === 'stories'),
     special: achievements.filter(a => a.category === 'special'),
   };
 
