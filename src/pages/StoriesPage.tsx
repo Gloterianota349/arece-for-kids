@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Header } from '@/components/Header';
 import { Button } from '@/components/ui/button';
 import { BookOpen, ChevronLeft, ChevronRight, Play, Pause, Volume2, VolumeX, Loader2 } from 'lucide-react';
@@ -138,8 +138,10 @@ export default function StoriesPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  const [completedStories, setCompletedStories] = useState<Set<string>>(new Set());
+  const audioListenCountRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { addPoints, unlockAchievement, playerState } = useGame();
+  const { addPoints, unlockAchievement, incrementAchievementProgress, playerState } = useGame();
 
   const generateAudio = async (text: string) => {
     try {
@@ -180,6 +182,9 @@ export default function StoriesPage() {
       
       await audio.play();
       setIsPlaying(true);
+      // Track audio listens for achievement
+      audioListenCountRef.current += 1;
+      incrementAchievementProgress('audio_listener', 1);
     } catch (error) {
       console.error('Audio generation error:', error);
       toast.error('Não foi possível gerar o áudio. Tente novamente.');
@@ -220,9 +225,18 @@ export default function StoriesPage() {
     } else {
       // Story completed
       addPoints(100);
-      if (!playerState.achievements.includes('curious_mind')) {
-        unlockAchievement('curious_mind');
+      
+      // Track story completion for achievements
+      if (!completedStories.has(selectedStory.id)) {
+        setCompletedStories(prev => new Set([...prev, selectedStory.id]));
+        incrementAchievementProgress('story_lover', 1);
+        
+        // First story achievement
+        if (!playerState.achievements.includes('first_story')) {
+          unlockAchievement('first_story');
+        }
       }
+      
       toast.success('🎉 História concluída! +100 pontos');
       setSelectedStory(null);
       setCurrentPage(0);

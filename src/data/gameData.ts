@@ -278,6 +278,37 @@ export const achievements: Achievement[] = [
     maxProgress: 1,
     category: 'learning',
   },
+  // Histórias
+  {
+    id: 'first_story',
+    name: 'Primeira História',
+    description: 'Complete sua primeira história',
+    icon: '📖',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 1,
+    category: 'stories',
+  },
+  {
+    id: 'story_lover',
+    name: 'Amante de Histórias',
+    description: 'Complete todas as 3 histórias',
+    icon: '📚',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 3,
+    category: 'stories',
+  },
+  {
+    id: 'audio_listener',
+    name: 'Ouvinte Atento',
+    description: 'Ouça 10 páginas de histórias',
+    icon: '🎧',
+    unlocked: false,
+    progress: 0,
+    maxProgress: 10,
+    category: 'stories',
+  },
   // Especiais
   {
     id: 'daily_player',

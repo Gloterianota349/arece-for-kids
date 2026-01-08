@@ -86,15 +86,8 @@ export default function GamePlayPage() {
         incrementAchievementProgress('quiz_genius', Math.floor(score / 200));
       }
       
-      if (game.id === 'mosquito') {
-        // Track mosquito kills (estimate based on score)
-        incrementAchievementProgress('mosquito_slayer', Math.floor(score / 10));
-      }
-      
-      if (game.id === 'wordsearch') {
-        // Track words found (estimate based on score)
-        incrementAchievementProgress('word_hunter', Math.floor(score / 50));
-      }
+      // Note: mosquito_slayer is tracked directly in MosquitoGame
+      // Note: word_hunter is tracked directly in WordSearchGame
       
       // Check for perfect score achievement
       if (score >= 1000) {

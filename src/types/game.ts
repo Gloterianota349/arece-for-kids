@@ -31,7 +31,7 @@ export interface Achievement {
   unlocked: boolean;
   progress: number;
   maxProgress: number;
-  category: 'games' | 'collection' | 'learning' | 'special';
+  category: 'games' | 'collection' | 'learning' | 'stories' | 'special';
 }
 
 export interface GameProgress {

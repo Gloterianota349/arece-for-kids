@@ -338,7 +338,8 @@ export function GameProvider({ children }: { children: ReactNode }) {
       unlockAchievement('first_character');
     }
     
-    // Collector achievement (5 characters)
+    // Collector achievement (5 characters) - also update progress
+    updateAchievementProgress('collector', unlockedCount);
     if (unlockedCount >= 5 && !playerState.achievements.includes('collector')) {
       unlockAchievement('collector');
     }

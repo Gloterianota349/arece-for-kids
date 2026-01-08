@@ -1,7 +1,8 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Star, Clock, Heart, Target } from 'lucide-react';
 import { toast } from 'sonner';
+import { useGame } from '@/contexts/GameContext';
 
 interface MosquitoGameProps {
   level: number;
@@ -29,6 +30,7 @@ const levelConfigs = {
 
 export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
   const config = levelConfigs[level as keyof typeof levelConfigs];
+  const { incrementAchievementProgress } = useGame();
   
   const [mosquitoes, setMosquitoes] = useState<Mosquito[]>([]);
   const [score, setScore] = useState(0);
@@ -38,6 +40,7 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
   const [gameStarted, setGameStarted] = useState(false);
   const [combo, setCombo] = useState(0);
   const [nextId, setNextId] = useState(0);
+  const mosquitoKillsRef = useRef(0);
 
   const startGame = () => {
     setMosquitoes([]);
@@ -48,6 +51,7 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
     setGameStarted(true);
     setCombo(0);
     setNextId(0);
+    mosquitoKillsRef.current = 0;
   };
 
   useEffect(() => {
@@ -61,6 +65,8 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
     if (timeLeft <= 0) {
       setGameOver(true);
       const passed = score >= config.minScore;
+      // Track mosquito kills for achievement
+      incrementAchievementProgress('mosquito_slayer', mosquitoKillsRef.current);
       if (passed) {
         toast.success(`⏰ Tempo esgotado! Pontuação: ${score} - Você passou!`);
       } else {
@@ -133,6 +139,8 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
         if (newLives <= 0) {
           setGameOver(true);
           toast.error('💔 Você perdeu todas as vidas!');
+          // Track mosquito kills for achievement
+          incrementAchievementProgress('mosquito_slayer', mosquitoKillsRef.current);
           setTimeout(() => onComplete(Math.max(0, score)), 1500);
         } else {
           toast.error('🦋 Não acerte as borboletas!');
@@ -142,6 +150,7 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
       setCombo(0);
     } else {
       // Hit mosquito - score!
+      mosquitoKillsRef.current += 1;
       const newCombo = combo + 1;
       setCombo(newCombo);
       const points = 10 * (1 + Math.floor(newCombo / 3));
