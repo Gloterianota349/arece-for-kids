@@ -138,10 +138,9 @@ export default function StoriesPage() {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
-  const [completedStories, setCompletedStories] = useState<Set<string>>(new Set());
   const audioListenCountRef = useRef(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
-  const { addPoints, unlockAchievement, incrementAchievementProgress, playerState } = useGame();
+  const { addPoints, unlockAchievement, incrementAchievementProgress, trackStoryCompleted, trackDailyPlay, playerState } = useGame();
 
   const generateAudio = async (text: string) => {
     try {
@@ -225,16 +224,14 @@ export default function StoriesPage() {
     } else {
       // Story completed
       addPoints(100);
+      trackDailyPlay();
       
-      // Track story completion for achievements
-      if (!completedStories.has(selectedStory.id)) {
-        setCompletedStories(prev => new Set([...prev, selectedStory.id]));
-        incrementAchievementProgress('story_lover', 1);
-        
-        // First story achievement
-        if (!playerState.achievements.includes('first_story')) {
-          unlockAchievement('first_story');
-        }
+      // Track story completion for achievements (unique stories only)
+      trackStoryCompleted(selectedStory.id);
+      
+      // First story achievement
+      if (!playerState.achievements.includes('first_story')) {
+        unlockAchievement('first_story');
       }
       
       toast.success('🎉 História concluída! +100 pontos');

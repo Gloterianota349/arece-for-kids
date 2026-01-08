@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 export default function GamePlayPage() {
   const { gameId } = useParams();
   const navigate = useNavigate();
-  const { isGameUnlocked, playerState, updateGameProgress, addPoints, addCoins, unlockAchievement, incrementAchievementProgress } = useGame();
+  const { isGameUnlocked, playerState, updateGameProgress, addPoints, addCoins, unlockAchievement, incrementAchievementProgress, trackDailyPlay } = useGame();
   
   const game = games.find(g => g.id === gameId);
   const [selectedLevel, setSelectedLevel] = useState<number | null>(null);
@@ -69,6 +69,7 @@ export default function GamePlayPage() {
       updateGameProgress(game.id, selectedLevel, score);
       addPoints(score);
       addCoins(Math.floor(score / 10));
+      trackDailyPlay();
       
       // Check first game achievement
       if (!playerState.achievements.includes('first_game')) {
