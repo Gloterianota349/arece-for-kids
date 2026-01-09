@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { wordSearchWords } from '@/data/gameData';
 import { Star, Check, RotateCcw } from 'lucide-react';
@@ -24,7 +24,6 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
   const words = wordSearchWords[`level${level}` as keyof typeof wordSearchWords];
   const gridSize = 8 + level * 2;
   const { incrementAchievementProgress } = useGame();
-  const wordsFoundThisGameRef = useRef(0);
   
   const [grid, setGrid] = useState<Cell[][]>([]);
   const [selectedCells, setSelectedCells] = useState<Cell[]>([]);
@@ -98,7 +97,6 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
     setWordPositions(positions);
     setFoundWords([]);
     setSelectedCells([]);
-    wordsFoundThisGameRef.current = 0;
   };
 
   useEffect(() => {
@@ -108,8 +106,6 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
   useEffect(() => {
     if (foundWords.length === words.length && foundWords.length > 0) {
       const score = calculateScore();
-      // Track words found for achievement
-      incrementAchievementProgress('word_hunter', wordsFoundThisGameRef.current);
       toast.success(`🎉 Parabéns! Você encontrou todas as palavras!`);
       setTimeout(() => onComplete(score), 1500);
     }
@@ -190,6 +186,9 @@ export function WordSearchGame({ level, onComplete, onBack }: WordSearchGameProp
     if (matchedWord) {
       const newFoundWords = [...foundWords, matchedWord];
       setFoundWords(newFoundWords);
+      
+      // Increment word_hunter achievement for each word found
+      incrementAchievementProgress('word_hunter', 1);
       
       // Mark cells as found
       const newGrid = grid.map(row => row.map(c => {
