@@ -20,51 +20,51 @@ serve(async (req) => {
       );
     }
 
-    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const ELEVENLABS_API_KEY = Deno.env.get("ELEVENLABS_API_KEY");
     
-    if (!LOVABLE_API_KEY) {
-      throw new Error("LOVABLE_API_KEY not configured");
+    if (!ELEVENLABS_API_KEY) {
+      console.error("ELEVENLABS_API_KEY not configured");
+      throw new Error("ELEVENLABS_API_KEY not configured");
     }
 
-    // Using Lovable AI to generate a simple spoken response
-    // Since we don't have a direct TTS API, we'll use a workaround with Gemini
-    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${LOVABLE_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: "google/gemini-2.5-flash",
-        messages: [
-          {
-            role: "system",
-            content: "You are a helpful assistant that reads stories for children in Portuguese."
+    // Use ElevenLabs TTS API
+    // Voice: Laura (FGY2WhTYpPnrIDTdsKH5) - good for children's content in Portuguese
+    const voiceId = "FGY2WhTYpPnrIDTdsKH5";
+    
+    console.log("Generating audio for text:", text.substring(0, 50) + "...");
+
+    const response = await fetch(
+      `https://api.elevenlabs.io/v1/text-to-speech/${voiceId}?output_format=mp3_44100_128`,
+      {
+        method: "POST",
+        headers: {
+          "xi-api-key": ELEVENLABS_API_KEY,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          text,
+          model_id: "eleven_multilingual_v2",
+          voice_settings: {
+            stability: 0.6,
+            similarity_boost: 0.75,
+            style: 0.4,
+            use_speaker_boost: true,
+            speed: 0.9, // Slightly slower for children
           },
-          {
-            role: "user",
-            content: `Please acknowledge this text that I want to read: "${text}"`
-          }
-        ],
-      }),
-    });
+        }),
+      }
+    );
 
     if (!response.ok) {
-      throw new Error(`AI request failed: ${response.status}`);
+      const errorText = await response.text();
+      console.error("ElevenLabs API error:", response.status, errorText);
+      throw new Error(`ElevenLabs API error: ${response.status}`);
     }
 
-    // For now, return a placeholder response since we can't generate real audio
-    // In production, you would integrate with ElevenLabs or Google TTS
-    const message = "Audio generation is not available. Please read the text.";
-    
-    // Return a simple audio placeholder (silence)
-    // This is a minimal valid MP3 file (silence)
-    const silentMp3 = new Uint8Array([
-      0xFF, 0xFB, 0x90, 0x00, 0x00, 0x00, 0x00, 0x00,
-      0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-    ]);
+    const audioBuffer = await response.arrayBuffer();
+    console.log("Audio generated successfully, size:", audioBuffer.byteLength);
 
-    return new Response(silentMp3, {
+    return new Response(audioBuffer, {
       headers: {
         ...corsHeaders,
         "Content-Type": "audio/mpeg",
