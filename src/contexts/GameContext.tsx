@@ -299,20 +299,22 @@ export function GameProvider({ children }: { children: ReactNode }) {
   const incrementAchievementProgress = (achievementId: string, amount: number = 1) => {
     const achievement = achievements.find(a => a.id === achievementId);
     if (!achievement) return;
-    
-    const currentProgress = typeof achievementProgress[achievementId] === 'number' 
-      ? achievementProgress[achievementId] as number 
-      : 0;
-    const newProgress = currentProgress + amount;
-    
-    setAchievementProgress(prev => ({
-      ...prev,
-      [achievementId]: Math.min(newProgress, achievement.maxProgress),
-    }));
-    
-    if (newProgress >= achievement.maxProgress && !playerState.achievements.includes(achievementId)) {
-      unlockAchievement(achievementId);
-    }
+
+    setAchievementProgress(prev => {
+      const currentProgress = typeof prev[achievementId] === 'number' ? (prev[achievementId] as number) : 0;
+      const newProgress = currentProgress + amount;
+      const cappedProgress = Math.min(newProgress, achievement.maxProgress);
+
+      // Unlock when reaching max progress
+      if (newProgress >= achievement.maxProgress && !playerState.achievements.includes(achievementId)) {
+        queueMicrotask(() => unlockAchievement(achievementId));
+      }
+
+      return {
+        ...prev,
+        [achievementId]: cappedProgress,
+      };
+    });
   };
 
   const getAchievementProgress = (achievementId: string): number => {
