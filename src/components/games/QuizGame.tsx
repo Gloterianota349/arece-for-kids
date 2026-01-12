@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { quizQuestions } from '@/data/gameData';
 import { Check, X, Star, HelpCircle, ChevronRight } from 'lucide-react';
 import { toast } from 'sonner';
-
+import { useGame } from '@/contexts/GameContext';
 interface QuizGameProps {
   level: number;
   onComplete: (score: number) => void;
@@ -28,6 +28,8 @@ export function QuizGame({ level, onComplete, onBack }: QuizGameProps) {
   const [correctAnswers, setCorrectAnswers] = useState(0);
   const [gameComplete, setGameComplete] = useState(false);
   const [streak, setStreak] = useState(0);
+  
+  const { incrementAchievementProgress } = useGame();
 
   const question = questions[currentQuestion];
 
@@ -40,6 +42,7 @@ export function QuizGame({ level, onComplete, onBack }: QuizGameProps) {
     if (answerIndex === question.correctAnswer) {
       setCorrectAnswers(c => c + 1);
       setStreak(s => s + 1);
+      incrementAchievementProgress('quiz_genius', 1); // Conta cada acerto individualmente
       toast.success('🎉 Correto!');
     } else {
       setStreak(0);
