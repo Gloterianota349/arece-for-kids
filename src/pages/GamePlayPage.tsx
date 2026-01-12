@@ -82,10 +82,7 @@ export default function GamePlayPage() {
         incrementAchievementProgress('memory_master', 1);
       }
       
-      if (game.id === 'quiz') {
-        // Track quiz progress (correct answers are in score calculation)
-        incrementAchievementProgress('quiz_genius', Math.floor(score / 200));
-      }
+      // Quiz progress is tracked directly in QuizGame component on each correct answer
       
       // Note: mosquito_slayer is tracked directly in MosquitoGame
       // Note: word_hunter is tracked directly in WordSearchGame
