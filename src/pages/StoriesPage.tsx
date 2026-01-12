@@ -160,10 +160,18 @@ export default function StoriesPage() {
       );
 
       if (!response.ok) {
+        const errorText = await response.text();
+        console.error('TTS response error:', response.status, errorText);
         throw new Error('Failed to generate audio');
       }
 
       const audioBlob = await response.blob();
+      console.log('Audio blob received:', audioBlob.size, 'bytes, type:', audioBlob.type);
+      
+      if (audioBlob.size === 0) {
+        throw new Error('Empty audio response');
+      }
+      
       const audioUrl = URL.createObjectURL(audioBlob);
       
       if (audioRef.current) {
@@ -171,19 +179,39 @@ export default function StoriesPage() {
         URL.revokeObjectURL(audioRef.current.src);
       }
       
-      const audio = new Audio(audioUrl);
+      const audio = new Audio();
       audio.muted = isMuted;
       audioRef.current = audio;
       
+      // Set up event handlers before setting src
       audio.onended = () => {
         setIsPlaying(false);
       };
       
-      await audio.play();
-      setIsPlaying(true);
-      // Track audio listens for achievement
-      audioListenCountRef.current += 1;
-      incrementAchievementProgress('audio_listener', 1);
+      audio.onerror = (e) => {
+        console.error('Audio playback error:', e);
+        setIsPlaying(false);
+        toast.error('Erro ao reproduzir o áudio.');
+      };
+      
+      audio.oncanplaythrough = async () => {
+        try {
+          await audio.play();
+          setIsPlaying(true);
+          // Track audio listens for achievement
+          audioListenCountRef.current += 1;
+          incrementAchievementProgress('audio_listener', 1);
+        } catch (playError) {
+          console.error('Audio play error:', playError);
+          toast.error('Não foi possível reproduzir o áudio. Toque novamente.');
+          setIsPlaying(false);
+        }
+      };
+      
+      // Set src after handlers are configured
+      audio.src = audioUrl;
+      audio.load();
+      
     } catch (error) {
       console.error('Audio generation error:', error);
       toast.error('Não foi possível gerar o áudio. Tente novamente.');
