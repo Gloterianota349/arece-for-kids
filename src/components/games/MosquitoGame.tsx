@@ -141,7 +141,8 @@ export function MosquitoGame({ level, onComplete, onBack }: MosquitoGameProps) {
           toast.error('💔 Você perdeu todas as vidas!');
           // Track mosquito kills for achievement
           incrementAchievementProgress('mosquito_slayer', mosquitoKillsRef.current);
-          setTimeout(() => onComplete(Math.max(0, score)), 1500);
+          // Always return 0 when losing all lives - level should not be completed
+          setTimeout(() => onComplete(0), 1500);
         } else {
           toast.error('🦋 Não acerte as borboletas!');
         }
