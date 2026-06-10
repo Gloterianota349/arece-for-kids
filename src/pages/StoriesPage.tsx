@@ -27,7 +27,7 @@ const stories: Story[] = [
     coverImage: '💧',
     pages: [
       {
-        text: 'Era uma vez, uma pequena gotinha de óleo de Copaíba chamada Gotinha. Ela nasceu no coração da Floresta Amazônica, dentro de uma grande árvore.',
+        text: 'Era uma vez, uma pequena gotinha amazônica chamada Gotinha. Ela nasceu no coração da Floresta Amazônica, dentro de uma grande árvore.',
         image: '🌳',
       },
       {
@@ -47,7 +47,7 @@ const stories: Story[] = [
         image: '🛡️',
       },
       {
-        text: 'As crianças ficaram muito felizes e aprenderam que produtos naturais da Amazônia, como o óleo de Copaíba, ajudam a proteger contra mosquitos de forma segura!',
+        text: 'As crianças ficaram muito felizes e aprenderam que produtos naturais da Amazônia ajudam a proteger contra mosquitos de forma segura!',
         image: '🎉',
       },
       {
@@ -84,7 +84,7 @@ const stories: Story[] = [
         image: '🧹',
       },
       {
-        text: 'O Guardião Verde também ensinou a usar repelentes naturais. "Produtos com óleo de Copaíba são seguros para crianças!"',
+        text: 'O Guardião Verde também ensinou a usar repelentes naturais. "Produtos naturais são seguros para crianças!"',
         image: '🌿',
       },
       {
@@ -113,7 +113,7 @@ const stories: Story[] = [
         image: '💨',
       },
       {
-        text: 'Ela mostrou a árvore Copaíba, de onde vem o óleo especial. "Este óleo natural ajuda a proteger as pessoas dos mosquitos!"',
+        text: 'Ela mostrou a árvore da floresta, de onde vêm ingredientes especiais. "Estes ingredientes naturais ajudam a proteger as pessoas dos mosquitos!"',
         image: '🌳',
       },
       {

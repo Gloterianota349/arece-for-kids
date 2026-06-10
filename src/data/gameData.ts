@@ -31,7 +31,7 @@ export const characters: Character[] = [
   {
     id: 'gota',
     name: 'Gotinha',
-    description: 'Uma gotinha de óleo de Copaíba muito alegre!',
+    description: 'Uma gotinha amazônica muito alegre!',
     rarity: 'basic',
     emoji: '💧',
     unlockCode: UNLOCK_CODES.CHAR_GOTA,
@@ -54,12 +54,12 @@ export const characters: Character[] = [
   {
     id: 'copi',
     name: 'Copi',
-    description: 'O mascote oficial da Copaíba!',
+    description: 'O mascote oficial da floresta!',
     rarity: 'common',
     emoji: '🌳',
     unlockCode: UNLOCK_CODES.CHAR_COPI,
     ability: 'Aroma Protetor',
-    story: 'Copi é o guardião das árvores de Copaíba. Ele carrega consigo o aroma natural que protege todos ao seu redor.',
+    story: 'Copi é o guardião das árvores da Amazônia. Ele carrega consigo o aroma natural que protege todos ao seu redor.',
     unlocked: false,
   },
   {
@@ -362,7 +362,7 @@ export const educationalContent: EducationalContent[] = [
     icon: '🛡️',
     color: 'from-blue-400 to-cyan-500',
     content: [
-      '🧴 Use repelentes naturais como os produtos Arecê com óleo de Copaíba!',
+      '🧴 Use repelentes naturais como os produtos Arecê!',
       '👕 Vista roupas claras e que cubram braços e pernas.',
       '🪟 Instale telas em portas e janelas.',
       '🌙 Use mosquiteiros na hora de dormir.',
@@ -372,10 +372,10 @@ export const educationalContent: EducationalContent[] = [
     ],
     quiz: [
       {
-        question: 'Qual ingrediente natural dos produtos Arecê ajuda a afastar mosquitos?',
-        options: ['Chocolate', 'Óleo de Copaíba', 'Leite', 'Açúcar'],
+        question: 'Qual tipo de produto Arecê ajuda a afastar mosquitos?',
+        options: ['Chocolate', 'Repelente Natural', 'Leite', 'Açúcar'],
         correctAnswer: 1,
-        explanation: 'O óleo de Copaíba é um ingrediente natural da Amazônia com propriedades repelentes!',
+        explanation: 'Os repelentes naturais da Arecê usam ingredientes da Amazônia para proteger você!',
       },
     ],
   },
@@ -433,7 +433,7 @@ export const educationalContent: EducationalContent[] = [
     content: [
       '🌬️ As árvores produzem o oxigênio que respiramos.',
       '💧 As florestas ajudam a regular o clima e as chuvas.',
-      '💊 Muitos remédios vêm das plantas, como o óleo de Copaíba!',
+      '💊 Muitos remédios e cosméticos vêm das plantas da Amazônia!',
       '🐝 Os insetos polinizam as plantas que nos dão frutas.',
       '🏞️ A natureza nos oferece lugares lindos para descansar.',
       '🧘 Estar na natureza faz bem para a mente e o corpo.',
@@ -441,10 +441,10 @@ export const educationalContent: EducationalContent[] = [
     ],
     quiz: [
       {
-        question: 'De onde vem o óleo de Copaíba usado nos produtos Arecê?',
-        options: ['De uma fábrica', 'De uma árvore da Amazônia', 'Do oceano', 'De uma pedra'],
+        question: 'De onde vêm os ingredientes naturais usados nos produtos Arecê?',
+        options: ['De uma fábrica', 'Da Floresta Amazônica', 'Do oceano', 'De uma pedra'],
         correctAnswer: 1,
-        explanation: 'O óleo de Copaíba vem da árvore Copaíba, nativa da Amazônia brasileira!',
+        explanation: 'Os ingredientes naturais da Arecê vêm da rica biodiversidade da Amazônia!',
       },
     ],
   },
@@ -482,7 +482,7 @@ export const educationalContent: EducationalContent[] = [
       '💨 Produz cerca de 20% do oxigênio do planeta.',
       '💧 O Rio Amazonas é o maior rio do mundo em volume de água.',
       '👥 Muitos povos indígenas vivem e protegem a floresta.',
-      '🌿 De lá vêm ingredientes naturais como o óleo de Copaíba.',
+      '🌿 De lá vêm ingredientes naturais e poderosos.',
       '❤️ Proteger a Amazônia é proteger nosso futuro!',
     ],
     quiz: [
@@ -535,9 +535,9 @@ export const quizQuestions = {
     },
     {
       question: 'Qual produto natural ajuda a afastar mosquitos?',
-      options: ['Chocolate', 'Óleo de Copaíba', 'Refrigerante', 'Pizza'],
+      options: ['Chocolate', 'Repelente Arecê', 'Refrigerante', 'Pizza'],
       correctAnswer: 1,
-      explanation: 'O óleo de Copaíba tem propriedades naturais repelentes!',
+      explanation: 'Os produtos da Arecê têm propriedades naturais que afastam os mosquitos!',
     },
   ],
   level2: [
@@ -594,10 +594,10 @@ export const quizQuestions = {
       explanation: 'Mosquitos são mais atraídos por cores escuras!',
     },
     {
-      question: 'O que é a Copaíba?',
-      options: ['Um tipo de mosquito', 'Uma árvore da Amazônia', 'Uma doença', 'Um país'],
+      question: 'O que é a Floresta Amazônica?',
+      options: ['Um tipo de mosquito', 'A maior floresta tropical do mundo', 'Uma doença', 'Um país'],
       correctAnswer: 1,
-      explanation: 'A Copaíba é uma árvore amazônica cujo óleo tem propriedades medicinais!',
+      explanation: 'A Amazônia é a maior floresta tropical do mundo e lar de muita biodiversidade!',
     },
   ],
   level5: [
@@ -624,8 +624,8 @@ export const quizQuestions = {
 
 export const wordSearchWords = {
   level1: ['AEDES', 'AGUA', 'DENGUE', 'SAUDE'],
-  level2: ['COPAIBA', 'FLORESTA', 'PROTEGER', 'NATUREZA', 'ARECE'],
-  level3: ['AMAZONIA', 'REPELENTE', 'MOSQUITO', 'PREVENIR', 'LIMPAR'],
+  level2: ['AMAZONIA', 'FLORESTA', 'PROTEGER', 'NATUREZA', 'ARECE'],
+  level3: ['BIOCOSMETICO', 'REPELENTE', 'MOSQUITO', 'PREVENIR', 'LIMPAR'],
   level4: ['BIODIVERSIDADE', 'SUSTENTAVEL', 'EQUILIBRIO', 'PRESERVAR'],
   level5: ['CONSCIENTIZACAO', 'RESPONSABILIDADE', 'COMUNIDADE', 'TRADICIONAL'],
 };
@@ -637,7 +637,7 @@ export const crosswordClues = {
     { word: 'ARECE', clue: 'Nome da marca de repelentes naturais (5 letras)', direction: 'horizontal' },
   ],
   level2: [
-    { word: 'COPAIBA', clue: 'Árvore amazônica usada nos produtos (7 letras)', direction: 'horizontal' },
+    { word: 'AMAZONIA', clue: 'A maior floresta tropical do mundo (8 letras)', direction: 'horizontal' },
     { word: 'NATURAL', clue: 'Produto que vem da natureza (7 letras)', direction: 'vertical' },
     { word: 'FOLHA', clue: 'Parte verde das plantas (5 letras)', direction: 'horizontal' },
     { word: 'OLEO', clue: 'Substância extraída das árvores (4 letras)', direction: 'vertical' },
