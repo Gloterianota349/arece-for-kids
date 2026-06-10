@@ -113,7 +113,7 @@ const stories: Story[] = [
         image: '💨',
       },
       {
-        text: 'Ela mostrou a árvore Copaíba, de onde vem o óleo especial. "Este óleo natural ajuda a proteger as pessoas dos mosquitos!"',
+        text: 'Ela mostrou a árvore da floresta, de onde vêm ingredientes especiais. "Estes ingredientes naturais ajudam a proteger as pessoas dos mosquitos!"',
         image: '🌳',
       },
       {
