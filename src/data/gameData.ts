@@ -433,7 +433,7 @@ export const educationalContent: EducationalContent[] = [
     content: [
       '🌬️ As árvores produzem o oxigênio que respiramos.',
       '💧 As florestas ajudam a regular o clima e as chuvas.',
-      '💊 Muitos remédios vêm das plantas, como o óleo de Copaíba!',
+      '💊 Muitos remédios e cosméticos vêm das plantas da Amazônia!',
       '🐝 Os insetos polinizam as plantas que nos dão frutas.',
       '🏞️ A natureza nos oferece lugares lindos para descansar.',
       '🧘 Estar na natureza faz bem para a mente e o corpo.',
@@ -441,10 +441,10 @@ export const educationalContent: EducationalContent[] = [
     ],
     quiz: [
       {
-        question: 'De onde vem o óleo de Copaíba usado nos produtos Arecê?',
-        options: ['De uma fábrica', 'De uma árvore da Amazônia', 'Do oceano', 'De uma pedra'],
+        question: 'De onde vêm os ingredientes naturais usados nos produtos Arecê?',
+        options: ['De uma fábrica', 'Da Floresta Amazônica', 'Do oceano', 'De uma pedra'],
         correctAnswer: 1,
-        explanation: 'O óleo de Copaíba vem da árvore Copaíba, nativa da Amazônia brasileira!',
+        explanation: 'Os ingredientes naturais da Arecê vêm da rica biodiversidade da Amazônia!',
       },
     ],
   },
