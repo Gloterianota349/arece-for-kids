@@ -195,7 +195,7 @@ const Index = () => {
                 Proteção Natural da Amazônia
               </h2>
               <p className="text-muted-foreground text-lg max-w-2xl mx-auto mb-6">
-                Os produtos Arecê são feitos com óleo de Copaíba, um ingrediente natural 
+                Os produtos Arecê são feitos com um ingrediente natural 
                 da Floresta Amazônica que protege você dos mosquitos de forma gentil e eficaz.
               </p>
               <div className="flex flex-wrap justify-center gap-4">
