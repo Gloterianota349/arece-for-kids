@@ -84,7 +84,7 @@ const stories: Story[] = [
         image: '🧹',
       },
       {
-        text: 'O Guardião Verde também ensinou a usar repelentes naturais. "Produtos com óleo de Copaíba são seguros para crianças!"',
+        text: 'O Guardião Verde também ensinou a usar repelentes naturais. "Produtos naturais são seguros para crianças!"',
         image: '🌿',
       },
       {
