@@ -625,7 +625,7 @@ export const quizQuestions = {
 export const wordSearchWords = {
   level1: ['AEDES', 'AGUA', 'DENGUE', 'SAUDE'],
   level2: ['AMAZONIA', 'FLORESTA', 'PROTEGER', 'NATUREZA', 'ARECE'],
-  level3: ['AMAZONIA', 'REPELENTE', 'MOSQUITO', 'PREVENIR', 'LIMPAR'],
+  level3: ['BIOCOSMETICO', 'REPELENTE', 'MOSQUITO', 'PREVENIR', 'LIMPAR'],
   level4: ['BIODIVERSIDADE', 'SUSTENTAVEL', 'EQUILIBRIO', 'PRESERVAR'],
   level5: ['CONSCIENTIZACAO', 'RESPONSABILIDADE', 'COMUNIDADE', 'TRADICIONAL'],
 };
