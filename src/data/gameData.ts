@@ -594,10 +594,10 @@ export const quizQuestions = {
       explanation: 'Mosquitos são mais atraídos por cores escuras!',
     },
     {
-      question: 'O que é a Copaíba?',
-      options: ['Um tipo de mosquito', 'Uma árvore da Amazônia', 'Uma doença', 'Um país'],
+      question: 'O que é a Floresta Amazônica?',
+      options: ['Um tipo de mosquito', 'A maior floresta tropical do mundo', 'Uma doença', 'Um país'],
       correctAnswer: 1,
-      explanation: 'A Copaíba é uma árvore amazônica cujo óleo tem propriedades medicinais!',
+      explanation: 'A Amazônia é a maior floresta tropical do mundo e lar de muita biodiversidade!',
     },
   ],
   level5: [
