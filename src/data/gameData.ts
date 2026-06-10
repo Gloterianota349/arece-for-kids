@@ -362,7 +362,7 @@ export const educationalContent: EducationalContent[] = [
     icon: '🛡️',
     color: 'from-blue-400 to-cyan-500',
     content: [
-      '🧴 Use repelentes naturais como os produtos Arecê com óleo de Copaíba!',
+      '🧴 Use repelentes naturais como os produtos Arecê!',
       '👕 Vista roupas claras e que cubram braços e pernas.',
       '🪟 Instale telas em portas e janelas.',
       '🌙 Use mosquiteiros na hora de dormir.',
@@ -372,10 +372,10 @@ export const educationalContent: EducationalContent[] = [
     ],
     quiz: [
       {
-        question: 'Qual ingrediente natural dos produtos Arecê ajuda a afastar mosquitos?',
-        options: ['Chocolate', 'Óleo de Copaíba', 'Leite', 'Açúcar'],
+        question: 'Qual tipo de produto Arecê ajuda a afastar mosquitos?',
+        options: ['Chocolate', 'Repelente Natural', 'Leite', 'Açúcar'],
         correctAnswer: 1,
-        explanation: 'O óleo de Copaíba é um ingrediente natural da Amazônia com propriedades repelentes!',
+        explanation: 'Os repelentes naturais da Arecê usam ingredientes da Amazônia para proteger você!',
       },
     ],
   },
