@@ -54,12 +54,12 @@ export const characters: Character[] = [
   {
     id: 'copi',
     name: 'Copi',
-    description: 'O mascote oficial da Copaíba!',
+    description: 'O mascote oficial da floresta!',
     rarity: 'common',
     emoji: '🌳',
     unlockCode: UNLOCK_CODES.CHAR_COPI,
     ability: 'Aroma Protetor',
-    story: 'Copi é o guardião das árvores de Copaíba. Ele carrega consigo o aroma natural que protege todos ao seu redor.',
+    story: 'Copi é o guardião das árvores da Amazônia. Ele carrega consigo o aroma natural que protege todos ao seu redor.',
     unlocked: false,
   },
   {
