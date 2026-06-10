@@ -27,7 +27,7 @@ const stories: Story[] = [
     coverImage: '💧',
     pages: [
       {
-        text: 'Era uma vez, uma pequena gotinha de óleo de Copaíba chamada Gotinha. Ela nasceu no coração da Floresta Amazônica, dentro de uma grande árvore.',
+        text: 'Era uma vez, uma pequena gotinha amazônica chamada Gotinha. Ela nasceu no coração da Floresta Amazônica, dentro de uma grande árvore.',
         image: '🌳',
       },
       {
