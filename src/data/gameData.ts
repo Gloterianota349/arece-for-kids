@@ -31,7 +31,7 @@ export const characters: Character[] = [
   {
     id: 'gota',
     name: 'Gotinha',
-    description: 'Uma gotinha de óleo de Copaíba muito alegre!',
+    description: 'Uma gotinha amazônica muito alegre!',
     rarity: 'basic',
     emoji: '💧',
     unlockCode: UNLOCK_CODES.CHAR_GOTA,
