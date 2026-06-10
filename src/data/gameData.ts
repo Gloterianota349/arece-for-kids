@@ -482,7 +482,7 @@ export const educationalContent: EducationalContent[] = [
       '💨 Produz cerca de 20% do oxigênio do planeta.',
       '💧 O Rio Amazonas é o maior rio do mundo em volume de água.',
       '👥 Muitos povos indígenas vivem e protegem a floresta.',
-      '🌿 De lá vêm ingredientes naturais como o óleo de Copaíba.',
+      '🌿 De lá vêm ingredientes naturais e poderosos.',
       '❤️ Proteger a Amazônia é proteger nosso futuro!',
     ],
     quiz: [
