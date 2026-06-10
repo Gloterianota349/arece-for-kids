@@ -47,7 +47,7 @@ const stories: Story[] = [
         image: '🛡️',
       },
       {
-        text: 'As crianças ficaram muito felizes e aprenderam que produtos naturais da Amazônia, como o óleo de Copaíba, ajudam a proteger contra mosquitos de forma segura!',
+        text: 'As crianças ficaram muito felizes e aprenderam que produtos naturais da Amazônia ajudam a proteger contra mosquitos de forma segura!',
         image: '🎉',
       },
       {
