@@ -535,9 +535,9 @@ export const quizQuestions = {
     },
     {
       question: 'Qual produto natural ajuda a afastar mosquitos?',
-      options: ['Chocolate', 'Óleo de Copaíba', 'Refrigerante', 'Pizza'],
+      options: ['Chocolate', 'Repelente Arecê', 'Refrigerante', 'Pizza'],
       correctAnswer: 1,
-      explanation: 'O óleo de Copaíba tem propriedades naturais repelentes!',
+      explanation: 'Os produtos da Arecê têm propriedades naturais que afastam os mosquitos!',
     },
   ],
   level2: [
