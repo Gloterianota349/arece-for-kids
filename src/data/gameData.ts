@@ -637,7 +637,7 @@ export const crosswordClues = {
     { word: 'ARECE', clue: 'Nome da marca de repelentes naturais (5 letras)', direction: 'horizontal' },
   ],
   level2: [
-    { word: 'COPAIBA', clue: 'Árvore amazônica usada nos produtos (7 letras)', direction: 'horizontal' },
+    { word: 'AMAZONIA', clue: 'A maior floresta tropical do mundo (8 letras)', direction: 'horizontal' },
     { word: 'NATURAL', clue: 'Produto que vem da natureza (7 letras)', direction: 'vertical' },
     { word: 'FOLHA', clue: 'Parte verde das plantas (5 letras)', direction: 'horizontal' },
     { word: 'OLEO', clue: 'Substância extraída das árvores (4 letras)', direction: 'vertical' },
