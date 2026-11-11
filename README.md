@@ -1,73 +1,26 @@
-# Welcome to your Lovable project
+# Arecê Kids Adventures
 
-## Project info
+Por favor, sabendo-se que estou com uma marca chamada "Arecê", que vai vender cosméticos com propriedades insetífugas derivadas da Copaíba, tendo-se que desejo ter uma linha voltada para crianças e, para isso, necessito desenvolver uma aplicação interativa com diversos jogos que motivem as crianças a comprarem o meu produto, crie essa aplicação para mim, de forma que em cada produto comprado tenha um código diferente que desbloqueie um novo jogo OU um novo personagem, havendo no mínimo 5 jogos (Jogo da Memória, Quiz, Caça-palavras, Palavras Cruzadas e Caça aos Mosquitos), no mínimo 5 fases em cada jogo (com dificuldade aumentando a cada fase que passa) e no mínimo 5 personagens no jogo (que possam ser selecionados e utilizados como avatar). Para além disso, implemente um espaço no qual as crianças possam aprender mais sobre como combater a ploriferação de Aedes Aegypti, como evitar ser picado por um Aedes Aegypti (trazendo o foco para minha marca), quais os impactos de ser picado por um Aedes Aegypti, como podemos ajudar a preservar a natureza, como a natureza nos ajuda, quais os impactos da destruição da natureza, entre outras abas que ajudem as crianças a aprenderem de forma didática e lúdica. Também implemente um sistema de conquistas. Obs.: Os personagens devem ser separados por básico, comum, épico e lendário, sendo virtualmente colecionáveis (quando o card de um personagem for clicado, deve aparecer um card ampliado mostrando as informações do personagem de forma mais detalhada). Pegue essa ideia minha, estruture e desenvolva ela melhor, aprimorando e modificando o que achar necessário, e me entregue ao final a aplicação completa concluída. Sabendo que a seguir consta a identidade visual de minha marca, adapte-a de forma a ficar um jogo que realmente capte e chame a atenção das crianças, mas possuindo ainda a identidade visual de minha marca: Cor primária: #f9f7f0, cor secundária: #aa4328, cor de destaque: #e78345; Fonte primária: TAN Pearl, fonte secundária: Montserrat. Me entregue ao final os códigos de desbloqueio de todos os jogos e personagens.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+This project was built with [Lovable](https://lovable.dev).
 
-## How can I edit this code?
+**Live app**: https://areceforkids.lovable.app
 
-There are several ways of editing your application.
+## Build with Lovable
 
-**Use Lovable**
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/815fc831-9843-4965-8359-11240a3a92a7).
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
 
-Changes made via Lovable will be committed automatically to this repo.
+## Development
 
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
